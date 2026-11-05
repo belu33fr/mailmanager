@@ -1,0 +1,268 @@
+# GLPI Plugin mailmanager - French translation
+# Copyright (C) 2024 BL Conseils
+# This file is distributed under the same license as the mailmanager package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: mailmanager 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"PO-Revision-Date: 2024-01-01 00:00+0000\n"
+"Last-Translator: BL Conseils <luc.berthaud@blconseils.com>\n"
+"Language-Team: French\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: src/MailServer.php
+msgid "Serveur mail"
+msgstr "Serveur mail"
+
+msgid "Serveurs mail"
+msgstr "Serveurs mail"
+
+msgid "Type de serveur"
+msgstr "Type de serveur"
+
+msgid "FQDN / Hôte"
+msgstr "FQDN / Hôte"
+
+msgid "Chiffrement"
+msgstr "Chiffrement"
+
+msgid "Port"
+msgstr "Port"
+
+msgid "Actif"
+msgstr "Actif"
+
+msgid "Compte administrateur (accès serveur)"
+msgstr "Compte administrateur (accès serveur)"
+
+msgid "Mot de passe identique entrée/sortie"
+msgstr "Mot de passe identique entrée/sortie"
+
+msgid "Le même compte sert pour la réception et l'envoi"
+msgstr "Le même compte sert pour la réception et l'envoi"
+
+msgid "Domaines gérés"
+msgstr "Domaines gérés"
+
+msgid "Maintenant Ctrl pour sélection multiple"
+msgstr "Maintenez Ctrl pour sélection multiple"
+
+msgid "Notes"
+msgstr "Notes"
+
+#: src/MailObject.php
+msgid "Objet mail"
+msgstr "Objet mail"
+
+msgid "Objets mail"
+msgstr "Objets mail"
+
+msgid "Boîtes mail"
+msgstr "Boîtes mail"
+
+msgid "Adresse mail"
+msgstr "Adresse mail"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Nom à afficher"
+msgstr "Nom à afficher"
+
+msgid "Domaine"
+msgstr "Domaine"
+
+msgid "Boîte mail — Informations"
+msgstr "Boîte mail — Informations"
+
+msgid "Utilisateur GLPI"
+msgstr "Utilisateur GLPI"
+
+msgid "Nom complet affiché dans les emails envoyés"
+msgstr "Nom complet affiché dans les emails envoyés"
+
+msgid "Boîte mail — Serveurs"
+msgstr "Boîte mail — Serveurs"
+
+msgid "Serveur entrant (IMAP/POP3)"
+msgstr "Serveur entrant (IMAP/POP3)"
+
+msgid "Serveur sortant (SMTP)"
+msgstr "Serveur sortant (SMTP)"
+
+msgid "Boîte mail — Compte d'accès"
+msgstr "Boîte mail — Compte d'accès"
+
+msgid "Compte accès entrant"
+msgstr "Compte accès entrant"
+
+msgid "Compte accès sortant (si différent)"
+msgstr "Compte accès sortant (si différent)"
+
+msgid "Boîte mail — Options"
+msgstr "Boîte mail — Options"
+
+msgid "Quota (Mo)"
+msgstr "Quota (Mo)"
+
+msgid "0 = illimité"
+msgstr "0 = illimité"
+
+msgid "Redirection active"
+msgstr "Redirection active"
+
+msgid "Rediriger vers"
+msgstr "Rediriger vers"
+
+msgid "Adresse de destination de la redirection"
+msgstr "Adresse de destination de la redirection"
+
+msgid "Répondeur automatique actif"
+msgstr "Répondeur automatique actif"
+
+msgid "Message de réponse automatique"
+msgstr "Message de réponse automatique"
+
+msgid "Boîte mail — Informations Exchange/MS365"
+msgstr "Boîte mail — Informations Exchange/MS365"
+
+msgid "Fonction / Titre"
+msgstr "Fonction / Titre"
+
+msgid "Service / Département"
+msgstr "Service / Département"
+
+msgid "Téléphone"
+msgstr "Téléphone"
+
+msgid "Mobile"
+msgstr "Mobile"
+
+msgid "Code postal"
+msgstr "Code postal"
+
+msgid "Ville"
+msgstr "Ville"
+
+msgid "Pays"
+msgstr "Pays"
+
+msgid "Boîte mail — Administration"
+msgstr "Boîte mail — Administration"
+
+msgid "Licence associée"
+msgstr "Licence associée"
+
+msgid "Email de secours / récupération"
+msgstr "Email de secours / récupération"
+
+msgid "Alias — Destination"
+msgstr "Alias — Destination"
+
+msgid "Choisir la cible"
+msgstr "Choisir la cible"
+
+msgid "Boîtes mail et boîtes partagées actives"
+msgstr "Boîtes mail et boîtes partagées actives"
+
+msgid "Liste d'email — Membres"
+msgstr "Liste d'email — Membres"
+
+msgid "Membres"
+msgstr "Membres"
+
+msgid "Boîtes mail membres de cette liste"
+msgstr "Boîtes mail membres de cette liste"
+
+msgid "Administrateurs"
+msgstr "Administrateurs"
+
+msgid "Boîtes autorisées à envoyer sur cette liste"
+msgstr "Boîtes autorisées à envoyer sur cette liste"
+
+msgid "Liste d'email — Paramètres"
+msgstr "Liste d'email — Paramètres"
+
+msgid "Liste modérée"
+msgstr "Liste modérée"
+
+msgid "Envoi réservé aux membres"
+msgstr "Envoi réservé aux membres"
+
+msgid "Répondre à la liste (Reply-To)"
+msgstr "Répondre à la liste (Reply-To)"
+
+msgid "Boîte partagée — Identité"
+msgstr "Boîte partagée — Identité"
+
+msgid "Ex: Support Client, Comptabilité"
+msgstr "Ex : Support Client, Comptabilité"
+
+msgid "Boîte partagée — Membres et permissions"
+msgstr "Boîte partagée — Membres et permissions"
+
+msgid "Accès complet (Membre)"
+msgstr "Accès complet (Membre)"
+
+msgid "Lecture / Gestion"
+msgstr "Lecture / Gestion"
+
+msgid "Envoyer en tant que"
+msgstr "Envoyer en tant que"
+
+msgid "Envoyer de la part de"
+msgstr "Envoyer de la part de"
+
+msgid "Boîte partagée — Options"
+msgstr "Boîte partagée — Options"
+
+msgid "Groupe mail — Membres"
+msgstr "Groupe mail — Membres"
+
+msgid "Membres du groupe"
+msgstr "Membres du groupe"
+
+msgid "Utilisateurs membres de ce groupe mail"
+msgstr "Utilisateurs membres de ce groupe mail"
+
+msgid "Appartenance"
+msgstr "Appartenance"
+
+msgid "Membre des listes"
+msgstr "Membre des listes"
+
+msgid "Administrateur des listes"
+msgstr "Administrateur des listes"
+
+#: src/Right.php
+msgid "Mail Manager"
+msgstr "Mail Manager"
+
+msgid "Serveurs mail"
+msgstr "Serveurs mail"
+
+msgid "Boîtes mail / Objets mail"
+msgstr "Boîtes mail / Objets mail"
+
+msgid "Configuration"
+msgstr "Configuration"
+
+#: front/config.php
+msgid "Configuration Mail Manager"
+msgstr "Configuration Mail Manager"
+
+#: src/Config.php
+msgid "Plugin Accounts requis pour la gestion des mots de passe."
+msgstr "Plugin Accounts requis pour la gestion des mots de passe."
+
+msgid "Ex: mail.example.com, smtp.office365.com"
+msgstr "Ex : mail.example.com, smtp.office365.com"
+
+msgid "Laissez 0 pour utiliser le port par défaut du type/chiffrement"
+msgstr "Laissez 0 pour utiliser le port par défaut du type/chiffrement"

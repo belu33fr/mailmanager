@@ -1,0 +1,130 @@
+{% extends "generic_show_form.html.twig" %}
+{% import "components/form/fields_macros.html.twig" as fields %}
+
+{% block more_fields %}
+
+{# Données JS pour l'auto-complétion des ports #}
+<script>
+window.mailmanagerServer = {
+    defaultPorts: {{ default_ports|raw }},
+    passwordInOutTypes: {{ password_in_out_types|json_encode|raw }}
+};
+</script>
+
+{{ fields.smallTitle(__('Informations générales', 'mailmanager')) }}
+
+{# Type de serveur #}
+<div class="mb-3 row">
+    <label class="col-xxl-4 col-form-label">{{ __('Type de serveur', 'mailmanager') }} *</label>
+    <div class="col-xxl-8">
+        <select name="server_type" id="mm-server-type" class="form-select" required>
+            {% for type, label in server_types %}
+                <option value="{{ type }}" {% if item.fields['server_type'] == type %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+{# FQDN #}
+{{ fields.textField('fqdn', item.fields['fqdn'] ?? '', __('FQDN / Hôte', 'mailmanager'), {
+    'required': true,
+    'helper': __('Ex: mail.example.com, smtp.office365.com', 'mailmanager')
+}) }}
+
+{# Chiffrement #}
+<div class="mb-3 row">
+    <label class="col-xxl-4 col-form-label">{{ __('Chiffrement', 'mailmanager') }}</label>
+    <div class="col-xxl-8">
+        <select name="encryption" id="mm-encryption" class="form-select">
+            {% for enc, label in encryptions %}
+                <option value="{{ enc }}" {% if item.fields['encryption'] == enc %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+{# Port #}
+{{ fields.numberField('port', item.fields['port'] ?? 0, __('Port', 'mailmanager'), {
+    'min': 1, 'max': 65535,
+    'id': 'mm-port',
+    'helper': __('Laissez 0 pour utiliser le port par défaut du type/chiffrement', 'mailmanager')
+}) }}
+
+{# Actif #}
+{{ fields.checkboxField('is_active', item.fields['is_active'] ?? 1, __('Actif', 'mailmanager')) }}
+
+{{ fields.smallTitle(__('Compte technique d\'accès', 'mailmanager')) }}
+
+{% if accounts_class %}
+    {{ fields.dropdownField(
+        accounts_class,
+        'plugin_accounts_accounts_id',
+        item.fields['plugin_accounts_accounts_id'] ?? 0,
+        __('Compte administrateur (accès serveur)', 'mailmanager'),
+        {'display_emptychoice': true}
+    ) }}
+{% else %}
+    <div class="alert alert-warning">
+        <i class="ti ti-alert-triangle me-2"></i>
+        {{ __('Plugin Accounts requis pour la gestion des mots de passe.', 'mailmanager') }}
+    </div>
+{% endif %}
+
+{# Password In = Out (pertinent pour SMTP) #}
+<div id="mm-password-in-out-section" class="mb-3 row" style="display:none">
+    <label class="col-xxl-4 col-form-label">{{ __('Mot de passe identique entrée/sortie', 'mailmanager') }}</label>
+    <div class="col-xxl-8 d-flex align-items-center">
+        <input type="checkbox" name="password_in_out" id="mm-password-in-out" class="form-check-input"
+               value="1" {% if item.fields['password_in_out'] ?? 0 %}checked{% endif %} />
+        <small class="text-muted ms-2">{{ __('Le même compte sert pour la réception et l\'envoi', 'mailmanager') }}</small>
+    </div>
+</div>
+
+{{ fields.smallTitle(__('Organisation', 'mailmanager')) }}
+
+{# Domaines liés #}
+<div class="mb-3 row">
+    <label class="col-xxl-4 col-form-label">{{ __('Domaines gérés', 'mailmanager') }}</label>
+    <div class="col-xxl-8">
+        {{ fields.dropdownField('Domain', 'linked_domains_ids[]', linked_domains, __('Domaines', 'mailmanager'), {
+            'multiple': true,
+            'display_emptychoice': false,
+            'values': linked_domains
+        })|raw }}
+        {# Fallback natif si dropdownField ne supporte pas multiple #}
+        <select name="linked_domains_ids[]" class="form-select" multiple style="min-height:80px">
+            {% set all_domains = glpi_domains() is defined ? glpi_domains() : [] %}
+            {# Les domaines sont sélectionnés côté PHP via linked_domains #}
+        </select>
+        <small class="text-muted">{{ __('Maintenez Ctrl pour sélection multiple', 'mailmanager') }}</small>
+    </div>
+</div>
+
+{# État #}
+{{ fields.dropdownField('State', 'states_id', item.fields['states_id'] ?? 0, __('État'), {
+    'display_emptychoice': true,
+    'condition': {'is_visible_computer': 1}
+}) }}
+
+{# Groupe #}
+{{ fields.dropdownField('Group', 'groups_id', item.fields['groups_id'] ?? 0, __('Groupe'), {
+    'display_emptychoice': true,
+    'only_my_groups': false
+}) }}
+
+{# Groupe technique #}
+{{ fields.dropdownField('Group', 'groups_id_tech', item.fields['groups_id_tech'] ?? 0, __('Groupe chargé du suivi'), {
+    'display_emptychoice': true,
+    'only_my_groups': false
+}) }}
+
+{{ fields.smallTitle(__('Notes', 'mailmanager')) }}
+{{ fields.textareaField('comment', item.fields['comment'] ?? '', __('Commentaire')) }}
+
+<script src="{{ webdir }}/public/mailserver.form.js"></script>
+
+{% endblock more_fields %}

@@ -1,0 +1,332 @@
+{% extends "generic_show_form.html.twig" %}
+{% import "components/form/fields_macros.html.twig" as fields %}
+
+{% block more_fields %}
+
+{# Données JS pour l'affichage conditionnel #}
+<script>
+window.mailmanagerObject = {
+    types: {{ mail_types|keys|json_encode|raw }},
+    currentType: '{{ item.fields['mail_type'] ?? 'mailbox' }}'
+};
+</script>
+
+{{ fields.smallTitle(__('Identification', 'mailmanager')) }}
+
+{# Type d'objet mail #}
+<div class="mb-3 row">
+    <label class="col-xxl-4 col-form-label">{{ __('Type', 'mailmanager') }} *</label>
+    <div class="col-xxl-8">
+        <select name="mail_type" id="mm-mail-type" class="form-select" required>
+            {% for type, label in mail_types %}
+                <option value="{{ type }}" {% if item.fields['mail_type'] == type %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+{# Adresse email #}
+{{ fields.textField('email', item.fields['email'] ?? '', __('Adresse mail', 'mailmanager'), {
+    'required': true,
+    'helper': __('Adresse complète : utilisateur@domaine.tld', 'mailmanager'),
+    'type': 'email'
+}) }}
+
+{# Domaine #}
+{{ fields.dropdownField('Domain', 'domains_id', item.fields['domains_id'] ?? 0, __('Domaine', 'mailmanager'), {
+    'display_emptychoice': true
+}) }}
+
+{# Actif #}
+{{ fields.checkboxField('is_active', item.fields['is_active'] ?? 1, __('Actif', 'mailmanager')) }}
+
+{# État #}
+{{ fields.dropdownField('State', 'states_id', item.fields['states_id'] ?? 0, __('État'), {
+    'display_emptychoice': true
+}) }}
+
+{# ================================================================
+   SECTION : Boîte mail (mailbox)
+   ================================================================ #}
+<div id="mm-section-mailbox" class="mm-type-section">
+
+    {{ fields.smallTitle(__('Boîte mail — Informations', 'mailmanager')) }}
+
+    {# Utilisateur GLPI associé #}
+    {{ fields.dropdownField('User', 'users_id', item.fields['users_id'] ?? 0, __('Utilisateur GLPI', 'mailmanager'), {
+        'display_emptychoice': true,
+        'right': 'all'
+    }) }}
+
+    {# Nom à afficher #}
+    {{ fields.textField('display_name', item.fields['display_name'] ?? default_display_name, __('Nom à afficher', 'mailmanager'), {
+        'helper': __('Nom complet affiché dans les emails envoyés', 'mailmanager')
+    }) }}
+
+    {{ fields.smallTitle(__('Boîte mail — Serveurs', 'mailmanager')) }}
+
+    {# Serveur entrant #}
+    {{ fields.dropdownField('GlpiPlugin\\Mailmanager\\MailServer', 'mailservers_id_in', item.fields['mailservers_id_in'] ?? 0, __('Serveur entrant (IMAP/POP3)', 'mailmanager'), {
+        'display_emptychoice': true
+    }) }}
+
+    {# Serveur sortant #}
+    {{ fields.dropdownField('GlpiPlugin\\Mailmanager\\MailServer', 'mailservers_id_out', item.fields['mailservers_id_out'] ?? 0, __('Serveur sortant (SMTP)', 'mailmanager'), {
+        'display_emptychoice': true
+    }) }}
+
+    {% if accounts_class %}
+    {{ fields.smallTitle(__('Boîte mail — Compte d\'accès', 'mailmanager')) }}
+
+    {# Compte entrant #}
+    {{ fields.dropdownField(accounts_class, 'plugin_accounts_accounts_id_in', item.fields['plugin_accounts_accounts_id_in'] ?? 0, __('Compte accès entrant', 'mailmanager'), {
+        'display_emptychoice': true
+    }) }}
+
+    {# Compte sortant différent ? #}
+    {{ fields.dropdownField(accounts_class, 'plugin_accounts_accounts_id_out', item.fields['plugin_accounts_accounts_id_out'] ?? 0, __('Compte accès sortant (si différent)', 'mailmanager'), {
+        'display_emptychoice': true
+    }) }}
+    {% endif %}
+
+    {{ fields.smallTitle(__('Boîte mail — Options', 'mailmanager')) }}
+
+    {# Quota #}
+    {{ fields.numberField('quota_mb', item.fields['quota_mb'] ?? 0, __('Quota (Mo)', 'mailmanager'), {
+        'min': 0,
+        'helper': __('0 = illimité', 'mailmanager')
+    }) }}
+
+    {# Redirection #}
+    {{ fields.checkboxField('has_forward', item.fields['has_forward'] ?? 0, __('Redirection active', 'mailmanager'), {
+        'id': 'mm-has-forward'
+    }) }}
+    <div id="mm-forward-section" {% if not item.fields['has_forward'] %}style="display:none"{% endif %}>
+        {{ fields.textField('forward_to', item.fields['forward_to'] ?? '', __('Rediriger vers', 'mailmanager'), {
+            'helper': __('Adresse de destination de la redirection', 'mailmanager')
+        }) }}
+    </div>
+
+    {# Réponse automatique #}
+    {{ fields.checkboxField('has_autoreply', item.fields['has_autoreply'] ?? 0, __('Répondeur automatique actif', 'mailmanager'), {
+        'id': 'mm-has-autoreply'
+    }) }}
+    <div id="mm-autoreply-section" {% if not item.fields['has_autoreply'] %}style="display:none"{% endif %}>
+        {{ fields.textareaField('autoreply_text', item.fields['autoreply_text'] ?? '', __('Message de réponse automatique', 'mailmanager')) }}
+    </div>
+
+    {{ fields.smallTitle(__('Boîte mail — Informations Exchange/MS365', 'mailmanager')) }}
+
+    {{ fields.textField('job_title', item.fields['job_title'] ?? '', __('Fonction / Titre', 'mailmanager')) }}
+    {{ fields.textField('department', item.fields['department'] ?? '', __('Service / Département', 'mailmanager')) }}
+    {{ fields.textField('phone', item.fields['phone'] ?? '', __('Téléphone', 'mailmanager')) }}
+    {{ fields.textField('phone_mobile', item.fields['phone_mobile'] ?? '', __('Mobile', 'mailmanager')) }}
+    {{ fields.textField('postal_code', item.fields['postal_code'] ?? '', __('Code postal', 'mailmanager')) }}
+    {{ fields.textField('city', item.fields['city'] ?? '', __('Ville', 'mailmanager')) }}
+    {{ fields.textField('country', item.fields['country'] ?? '', __('Pays', 'mailmanager')) }}
+
+    {{ fields.smallTitle(__('Boîte mail — Administration', 'mailmanager')) }}
+
+    {{ fields.dropdownField('SoftwareLicense', 'softwarelicenses_id', item.fields['softwarelicenses_id'] ?? 0, __('Licence associée', 'mailmanager'), {
+        'display_emptychoice': true
+    }) }}
+
+    {{ fields.textField('rescue_email', item.fields['rescue_email'] ?? '', __('Email de secours / récupération', 'mailmanager'), {
+        'type': 'email'
+    }) }}
+
+</div>{# /section mailbox #}
+
+{# ================================================================
+   SECTION : Alias
+   ================================================================ #}
+<div id="mm-section-alias" class="mm-type-section" style="display:none">
+
+    {{ fields.smallTitle(__('Alias — Destination', 'mailmanager')) }}
+
+    <div class="mb-3 row">
+        <label class="col-xxl-4 col-form-label">{{ __('Rediriger vers', 'mailmanager') }} *</label>
+        <div class="col-xxl-8">
+            <select name="alias_target_id" class="form-select">
+                <option value="0">-- {{ __('Choisir la cible', 'mailmanager') }} --</option>
+                {# Les boîtes mail et partagées actives — remplies par PHP/JS #}
+            </select>
+            <small class="text-muted">{{ __('Boîtes mail et boîtes partagées actives', 'mailmanager') }}</small>
+        </div>
+    </div>
+
+</div>{# /section alias #}
+
+{# ================================================================
+   SECTION : Liste d'email
+   ================================================================ #}
+<div id="mm-section-list" class="mm-type-section" style="display:none">
+
+    {{ fields.smallTitle(__('Liste d\'email — Membres', 'mailmanager')) }}
+
+    <div class="mb-3 row">
+        <label class="col-xxl-4 col-form-label">{{ __('Membres', 'mailmanager') }}</label>
+        <div class="col-xxl-8">
+            <select name="list_members_ids[]" class="form-select" multiple style="min-height:100px">
+                {% for id in list_members %}
+                    <option value="{{ id }}" selected>{{ id }}</option>
+                {% endfor %}
+            </select>
+            <small class="text-muted">{{ __('Boîtes mail membres de cette liste', 'mailmanager') }}</small>
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-xxl-4 col-form-label">{{ __('Administrateurs', 'mailmanager') }}</label>
+        <div class="col-xxl-8">
+            <select name="list_admins_ids[]" class="form-select" multiple style="min-height:80px">
+                {% for id in list_admins %}
+                    <option value="{{ id }}" selected>{{ id }}</option>
+                {% endfor %}
+            </select>
+            <small class="text-muted">{{ __('Boîtes autorisées à envoyer sur cette liste', 'mailmanager') }}</small>
+        </div>
+    </div>
+
+    {{ fields.smallTitle(__('Liste d\'email — Paramètres', 'mailmanager')) }}
+
+    {{ fields.checkboxField('list_moderated', item.fields['list_moderated'] ?? 0, __('Liste modérée', 'mailmanager')) }}
+    {{ fields.checkboxField('list_members_only', item.fields['list_members_only'] ?? 1, __('Envoi réservé aux membres', 'mailmanager')) }}
+    {{ fields.checkboxField('list_reply_to_list', item.fields['list_reply_to_list'] ?? 0, __('Répondre à la liste (Reply-To)', 'mailmanager')) }}
+
+</div>{# /section list #}
+
+{# ================================================================
+   SECTION : Boîte partagée
+   ================================================================ #}
+<div id="mm-section-shared" class="mm-type-section" style="display:none">
+
+    {{ fields.smallTitle(__('Boîte partagée — Identité', 'mailmanager')) }}
+
+    {{ fields.textField('shared_name', item.fields['shared_name'] ?? '', __('Nom à afficher', 'mailmanager'), {
+        'helper': __('Ex: Support Client, Comptabilité', 'mailmanager')
+    }) }}
+
+    {{ fields.smallTitle(__('Boîte partagée — Membres et permissions', 'mailmanager')) }}
+
+    <div class="mb-3 row">
+        <label class="col-xxl-4 col-form-label">{{ __('Accès complet (Membre)', 'mailmanager') }}</label>
+        <div class="col-xxl-8">
+            <select name="shared_members_ids[]" class="form-select" multiple style="min-height:80px">
+                {% for id in shared_members %}
+                    <option value="{{ id }}" selected>{{ id }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-xxl-4 col-form-label">{{ __('Lecture / Gestion', 'mailmanager') }}</label>
+        <div class="col-xxl-8">
+            <select name="shared_read_ids[]" class="form-select" multiple style="min-height:80px">
+                {% for id in shared_read %}
+                    <option value="{{ id }}" selected>{{ id }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-xxl-4 col-form-label">{{ __('Envoyer en tant que', 'mailmanager') }}</label>
+        <div class="col-xxl-8">
+            <select name="shared_send_as_ids[]" class="form-select" multiple style="min-height:80px">
+                {% for id in shared_send_as %}
+                    <option value="{{ id }}" selected>{{ id }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-xxl-4 col-form-label">{{ __('Envoyer de la part de', 'mailmanager') }}</label>
+        <div class="col-xxl-8">
+            <select name="shared_send_behalf_ids[]" class="form-select" multiple style="min-height:80px">
+                {% for id in shared_send_behalf %}
+                    <option value="{{ id }}" selected>{{ id }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    {{ fields.smallTitle(__('Boîte partagée — Options', 'mailmanager')) }}
+
+    {{ fields.checkboxField('shared_has_forward', item.fields['shared_has_forward'] ?? 0, __('Redirection active', 'mailmanager'), {
+        'id': 'mm-shared-has-forward'
+    }) }}
+    <div id="mm-shared-forward-section" {% if not item.fields['shared_has_forward'] %}style="display:none"{% endif %}>
+        {{ fields.textField('shared_forward_to', item.fields['shared_forward_to'] ?? '', __('Rediriger vers', 'mailmanager')) }}
+    </div>
+
+    {{ fields.checkboxField('shared_has_autoreply', item.fields['shared_has_autoreply'] ?? 0, __('Répondeur automatique actif', 'mailmanager'), {
+        'id': 'mm-shared-has-autoreply'
+    }) }}
+    <div id="mm-shared-autoreply-section" {% if not item.fields['shared_has_autoreply'] %}style="display:none"{% endif %}>
+        {{ fields.textareaField('shared_autoreply_text', item.fields['shared_autoreply_text'] ?? '', __('Message de réponse automatique', 'mailmanager')) }}
+    </div>
+
+</div>{# /section shared #}
+
+{# ================================================================
+   SECTION : Groupe mail
+   ================================================================ #}
+<div id="mm-section-group" class="mm-type-section" style="display:none">
+
+    {{ fields.smallTitle(__('Groupe mail — Membres', 'mailmanager')) }}
+
+    <div class="mb-3 row">
+        <label class="col-xxl-4 col-form-label">{{ __('Membres du groupe', 'mailmanager') }}</label>
+        <div class="col-xxl-8">
+            <select name="list_members_ids[]" class="form-select" multiple style="min-height:100px">
+                {% for id in list_members %}
+                    <option value="{{ id }}" selected>{{ id }}</option>
+                {% endfor %}
+            </select>
+            <small class="text-muted">{{ __('Utilisateurs membres de ce groupe mail', 'mailmanager') }}</small>
+        </div>
+    </div>
+
+</div>{# /section group #}
+
+{# ================================================================
+   Informations communes — bas de formulaire
+   ================================================================ #}
+{% if item.fields['id'] > 0 %}
+{{ fields.smallTitle(__('Appartenance', 'mailmanager')) }}
+
+{% if list_memberships %}
+<div class="mb-3 row">
+    <label class="col-xxl-4 col-form-label">{{ __('Membre des listes', 'mailmanager') }}</label>
+    <div class="col-xxl-8">
+        {% for listId in list_memberships %}
+            <span class="badge bg-secondary me-1">{{ listId }}</span>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if list_adminships %}
+<div class="mb-3 row">
+    <label class="col-xxl-4 col-form-label">{{ __('Administrateur des listes', 'mailmanager') }}</label>
+    <div class="col-xxl-8">
+        {% for listId in list_adminships %}
+            <span class="badge bg-info me-1">{{ listId }}</span>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% endif %}
+
+{{ fields.smallTitle(__('Notes', 'mailmanager')) }}
+{{ fields.textareaField('comment', item.fields['comment'] ?? '', __('Commentaire')) }}
+
+<script src="{{ webdir }}/public/mailobject.form.js"></script>
+
+{% endblock more_fields %}

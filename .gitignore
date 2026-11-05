@@ -1,0 +1,34 @@
+# Dépendances PHP
+vendor/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs et caches
+*.log
+*.cache
+
+# Fichiers compilés (optionnel — les .mo sont commités pour la prod)
+# locales/*.mo
+
+# Variables d'environnement et secrets
+.env
+.env.local
+*.secret
+
+# Node (si outils de build front ajoutés plus tard)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Couverture de tests
+coverage/
+.phpunit.result.cache

@@ -1,0 +1,174 @@
+# GLPI Plugin mailmanager - English translation
+# Copyright (C) 2024 BL Conseils
+# This file is distributed under the same license as the mailmanager package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: mailmanager 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"PO-Revision-Date: 2024-01-01 00:00+0000\n"
+"Last-Translator: BL Conseils <luc.berthaud@blconseils.com>\n"
+"Language-Team: English\n"
+"Language: en_GB\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/MailServer.php
+msgid "Serveur mail"
+msgstr "Mail Server"
+
+msgid "Serveurs mail"
+msgstr "Mail Servers"
+
+msgid "Type de serveur"
+msgstr "Server Type"
+
+msgid "FQDN / Hôte"
+msgstr "FQDN / Host"
+
+msgid "Chiffrement"
+msgstr "Encryption"
+
+msgid "Port"
+msgstr "Port"
+
+msgid "Actif"
+msgstr "Active"
+
+msgid "Compte administrateur (accès serveur)"
+msgstr "Administrator Account (Server Access)"
+
+msgid "Mot de passe identique entrée/sortie"
+msgstr "Same Password for Incoming/Outgoing"
+
+msgid "Le même compte sert pour la réception et l'envoi"
+msgstr "The same account is used for receiving and sending"
+
+msgid "Domaines gérés"
+msgstr "Managed Domains"
+
+msgid "Notes"
+msgstr "Notes"
+
+#: src/MailObject.php
+msgid "Objet mail"
+msgstr "Mail Object"
+
+msgid "Objets mail"
+msgstr "Mail Objects"
+
+msgid "Boîtes mail"
+msgstr "Mailboxes"
+
+msgid "Adresse mail"
+msgstr "Email Address"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Nom à afficher"
+msgstr "Display Name"
+
+msgid "Domaine"
+msgstr "Domain"
+
+msgid "Utilisateur GLPI"
+msgstr "GLPI User"
+
+msgid "Quota (Mo)"
+msgstr "Quota (MB)"
+
+msgid "0 = illimité"
+msgstr "0 = unlimited"
+
+msgid "Redirection active"
+msgstr "Active Forwarding"
+
+msgid "Rediriger vers"
+msgstr "Forward To"
+
+msgid "Répondeur automatique actif"
+msgstr "Auto-Reply Active"
+
+msgid "Message de réponse automatique"
+msgstr "Auto-Reply Message"
+
+msgid "Fonction / Titre"
+msgstr "Job Title"
+
+msgid "Service / Département"
+msgstr "Department"
+
+msgid "Téléphone"
+msgstr "Phone"
+
+msgid "Mobile"
+msgstr "Mobile"
+
+msgid "Code postal"
+msgstr "Postal Code"
+
+msgid "Ville"
+msgstr "City"
+
+msgid "Pays"
+msgstr "Country"
+
+msgid "Licence associée"
+msgstr "Associated Licence"
+
+msgid "Email de secours / récupération"
+msgstr "Recovery Email"
+
+msgid "Membres"
+msgstr "Members"
+
+msgid "Administrateurs"
+msgstr "Administrators"
+
+msgid "Liste modérée"
+msgstr "Moderated List"
+
+msgid "Envoi réservé aux membres"
+msgstr "Members Only Posting"
+
+msgid "Répondre à la liste (Reply-To)"
+msgstr "Reply-To List"
+
+msgid "Accès complet (Membre)"
+msgstr "Full Access (Member)"
+
+msgid "Lecture / Gestion"
+msgstr "Read / Manage"
+
+msgid "Envoyer en tant que"
+msgstr "Send As"
+
+msgid "Envoyer de la part de"
+msgstr "Send on Behalf"
+
+msgid "Membres du groupe"
+msgstr "Group Members"
+
+msgid "Appartenance"
+msgstr "Memberships"
+
+msgid "Membre des listes"
+msgstr "List Member"
+
+msgid "Administrateur des listes"
+msgstr "List Administrator"
+
+#: src/Right.php
+msgid "Mail Manager"
+msgstr "Mail Manager"
+
+msgid "Configuration"
+msgstr "Configuration"
+
+#: front/config.php
+msgid "Configuration Mail Manager"
+msgstr "Mail Manager Configuration"
