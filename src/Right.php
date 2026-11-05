@@ -133,6 +133,12 @@ class Right extends Profile
             foreach ($rights as $rightName => $value) {
                 if ($dbu->countElementsInTable('glpi_profilerights', ['profiles_id' => $profileId, 'name' => $rightName]) === 0) {
                     $profileRight->add(['profiles_id' => $profileId, 'name' => $rightName, 'rights' => $value]);
+                } else {
+                    // Mettre à jour si les droits sont à 0 (installation fraîche ou réinstallation)
+                    $DB->update('glpi_profilerights',
+                        ['rights' => $value],
+                        ['profiles_id' => $profileId, 'name' => $rightName, 'rights' => 0]
+                    );
                 }
             }
         }

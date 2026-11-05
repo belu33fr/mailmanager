@@ -45,7 +45,7 @@ function plugin_init_mailmanager(): void
     }
 
     // Onglet "Mail" dans les profils
-    Plugin::registerClass(Right::class, ['addtabon' => '\Profile']);
+    Plugin::registerClass(Right::class, ['addtabon' => 'Profile']);
 
     // Initialiser les droits dans la session courante
     Right::initProfile();
