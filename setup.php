@@ -51,7 +51,7 @@ function plugin_init_mailmanager(): void
     Right::initProfile();
 
     // Page de configuration
-    $PLUGIN_HOOKS[Hooks::CONFIG_PAGE]['mailmanager'] = 'front/config.php';
+    $PLUGIN_HOOKS[Hooks::CONFIG_PAGE]['mailmanager'] = 'Config';
 
     // JS du formulaire boîte mail (affichage conditionnel par type)
     if (strpos($_SERVER['REQUEST_URI'] ?? '', 'mailmanager/front/mailobject.form.php') !== false) {

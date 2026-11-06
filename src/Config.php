@@ -28,7 +28,7 @@ class Config extends CommonDBTM
         return $row ? $row['config_value'] : $default;
     }
 
-    public function display(array $options = []): void
+    public function display($options = []): void
     {
         $canedit = \Session::haveRight(Right::RIGHT_CONFIG, UPDATE);
 

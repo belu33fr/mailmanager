@@ -54,7 +54,7 @@ class MailObject extends CommonDBTM
 
     public static function getFormURL($full = true): string
     {
-        return Plugin::getWebDir('mailmanager', $full) . '/front/mailobject.form.php';
+        return Plugin::getWebDir('mailmanager', $full) . '/MailObject/form';
     }
 
     public static function getFormURLWithID($id = 0, $full = true): string
@@ -64,7 +64,7 @@ class MailObject extends CommonDBTM
 
     public static function getSearchURL($full = true): string
     {
-        return Plugin::getWebDir('mailmanager', $full) . '/front/mailobject.php';
+        return Plugin::getWebDir('mailmanager', $full) . '/MailObject';
     }
 
     // ------------------------------------------------------------------
