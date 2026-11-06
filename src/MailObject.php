@@ -73,7 +73,7 @@ class MailObject extends CommonDBTM
 
     public static function getMenuName(): string
     {
-        return __('Boîtes mail', 'mailmanager');
+        return 'Mail Manager';
     }
 
     public static function getMenuContent(): array
