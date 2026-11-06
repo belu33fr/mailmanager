@@ -13,7 +13,8 @@ Html::header(
     MailServer::getTypeName(2),
     $_SERVER['PHP_SELF'],
     'tools',
-    MailServer::class
+    MailServer::class,
+    'mailserver'
 );
 
 Search::show(MailServer::class);

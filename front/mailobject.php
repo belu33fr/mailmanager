@@ -13,7 +13,8 @@ Html::header(
     MailObject::getTypeName(2),
     $_SERVER['PHP_SELF'],
     'management',
-    MailObject::class
+    MailObject::class,
+    'mailobject'
 );
 
 Search::show(MailObject::class);

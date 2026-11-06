@@ -42,7 +42,8 @@ if (isset($_POST['add'])) {
         MailObject::getTypeName(1),
         $_SERVER['PHP_SELF'],
         'management',
-        MailObject::class
+        MailObject::class,
+        'mailobject'
     );
 
     $mailobject->display(['id' => $ID]);

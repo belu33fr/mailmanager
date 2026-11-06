@@ -42,7 +42,8 @@ if (isset($_POST['add'])) {
         MailServer::getTypeName(1),
         $_SERVER['PHP_SELF'],
         'tools',
-        MailServer::class
+        MailServer::class,
+        'mailserver'
     );
 
     $mailserver->display(['id' => $ID]);

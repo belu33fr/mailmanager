@@ -64,7 +64,7 @@ class MailServer extends CommonDBTM
 
     public static function getFormURL($full = true): string
     {
-        return Plugin::getWebDir('mailmanager', $full) . '/MailServer/form';
+        return Plugin::getWebDir('mailmanager', $full) . '/front/mailserver.form.php';
     }
 
     public static function getFormURLWithID($id = 0, $full = true): string
@@ -74,7 +74,7 @@ class MailServer extends CommonDBTM
 
     public static function getSearchURL($full = true): string
     {
-        return Plugin::getWebDir('mailmanager', $full) . '/MailServer';
+        return Plugin::getWebDir('mailmanager', $full) . '/front/mailserver.php';
     }
 
     // ------------------------------------------------------------------
