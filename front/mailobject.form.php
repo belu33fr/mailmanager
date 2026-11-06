@@ -43,7 +43,6 @@ if (isset($_POST['add'])) {
         MailObject::getTypeName(1),
         $_SERVER['PHP_SELF'],
         Menu::MENU_SECTOR,
-        Menu::class,
         'mailobject'
     );
 

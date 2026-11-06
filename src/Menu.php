@@ -6,16 +6,17 @@ use CommonGLPI;
 use Session;
 
 /**
- * Entrée unique du plugin dans le menu : Gestion → Mail Manager.
- * Les sous-entrées (Serveurs mail, Boîtes mail, plus tard Hébergeurs)
- * sont déclarées ici, en un seul endroit.
+ * Menu principal « Mail Manager » (secteur propre, à côté de Gestion, Outils…).
+ * GLPI n'a que deux niveaux (secteur → entrées) : les entrées Serveurs mail,
+ * Boîtes mail (et plus tard Hébergeurs mail) sont déclarées ici en mode
+ * « multi-entrées », en un seul endroit.
  */
 class Menu extends CommonGLPI
 {
     public static $rightname = Right::RIGHT_MAILSERVER;
 
     /** Secteur GLPI où se trouve le menu (utilisé par setup.php et les pages front). */
-    public const MENU_SECTOR = 'management';
+    public const MENU_SECTOR = 'mailmanager';
 
     public static function getTypeName($nb = 0): string
     {
@@ -40,10 +41,10 @@ class Menu extends CommonGLPI
 
     public static function getMenuContent(): array
     {
-        $options = [];
+        $entries = [];
 
         if (Session::haveRight(Right::RIGHT_MAILSERVER, READ)) {
-            $options['mailserver'] = [
+            $entries['mailserver'] = [
                 'title' => MailServer::getTypeName(2),
                 'page'  => MailServer::getSearchURL(false),
                 'icon'  => MailServer::getIcon(),
@@ -52,7 +53,7 @@ class Menu extends CommonGLPI
         }
 
         if (Session::haveRight(Right::RIGHT_MAILOBJECT, READ)) {
-            $options['mailobject'] = [
+            $entries['mailobject'] = [
                 'title' => MailObject::getTypeName(2),
                 'page'  => MailObject::getSearchURL(false),
                 'icon'  => MailObject::getIcon(),
@@ -60,16 +61,18 @@ class Menu extends CommonGLPI
             ];
         }
 
-        if ($options === []) {
+        if ($entries === []) {
             return [];
         }
 
+        // 'title' et 'icon' définissent le secteur lui-même ; 'is_multi_entries'
+        // demande à GLPI de fusionner nos entrées dans le menu (cf. Html::generateMenuSession).
         return [
-            'title'   => self::getMenuName(),
-            'page'    => reset($options)['page'],
-            'icon'    => self::getIcon(),
-            'options' => $options,
-        ];
+            'title'            => self::getMenuName(),
+            'icon'             => self::getIcon(),
+            'default'          => reset($entries)['page'],
+            'is_multi_entries' => true,
+        ] + $entries;
     }
 
     private static function links(string $class, string $right): array

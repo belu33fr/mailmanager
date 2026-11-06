@@ -14,7 +14,6 @@ Html::header(
     MailServer::getTypeName(2),
     $_SERVER['PHP_SELF'],
     Menu::MENU_SECTOR,
-    Menu::class,
     'mailserver'
 );
 

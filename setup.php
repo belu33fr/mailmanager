@@ -24,9 +24,10 @@ function plugin_init_mailmanager(): void
         return;
     }
 
-    // Menu unique : Gestion → Mail Manager (sous-entrées déclarées dans Menu::getMenuContent)
+    // Menu principal « Mail Manager » : nouveau secteur, entrées déclarées dans Menu::getMenuContent.
+    // La valeur doit être une liste de classes (tableau) pour que GLPI crée le secteur.
     $PLUGIN_HOOKS[Hooks::MENU_TOADD]['mailmanager'] = [
-        Menu::MENU_SECTOR => Menu::class,
+        Menu::MENU_SECTOR => [Menu::class],
     ];
 
     // Actions massives
