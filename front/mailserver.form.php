@@ -3,6 +3,7 @@
 include('../../../inc/includes.php');
 
 use GlpiPlugin\Mailmanager\MailServer;
+use GlpiPlugin\Mailmanager\Menu;
 
 Session::checkLoginUser();
 
@@ -41,8 +42,8 @@ if (isset($_POST['add'])) {
     Html::header(
         MailServer::getTypeName(1),
         $_SERVER['PHP_SELF'],
-        'tools',
-        MailServer::class,
+        Menu::MENU_SECTOR,
+        Menu::class,
         'mailserver'
     );
 

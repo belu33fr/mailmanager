@@ -11,6 +11,7 @@ define('PLUGIN_MAILMANAGER_MAX_GLPI', '12.0.0');
 use Glpi\Plugin\Hooks;
 use GlpiPlugin\Mailmanager\MailServer;
 use GlpiPlugin\Mailmanager\MailObject;
+use GlpiPlugin\Mailmanager\Menu;
 use GlpiPlugin\Mailmanager\Right;
 
 function plugin_init_mailmanager(): void
@@ -23,10 +24,9 @@ function plugin_init_mailmanager(): void
         return;
     }
 
-    // Menu Serveurs mail dans "Outils", Boîtes mail dans "Gestion"
+    // Menu unique : Gestion → Mail Manager (sous-entrées déclarées dans Menu::getMenuContent)
     $PLUGIN_HOOKS[Hooks::MENU_TOADD]['mailmanager'] = [
-        'tools'   => MailServer::class,
-        'management' => MailObject::class,
+        Menu::MENU_SECTOR => Menu::class,
     ];
 
     // Actions massives

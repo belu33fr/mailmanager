@@ -39,7 +39,7 @@ class MailObject extends CommonDBTM
 
     public static function getTypeName($nb = 0): string
     {
-        return _n('Objet mail', 'Objets mail', $nb, 'mailmanager');
+        return _n('Boîte mail', 'Boîtes mail', $nb, 'mailmanager');
     }
 
     public static function getTable($classname = null): string
@@ -65,37 +65,6 @@ class MailObject extends CommonDBTM
     public static function getSearchURL($full = true): string
     {
         return Plugin::getWebDir('mailmanager', $full) . '/front/mailobject.php';
-    }
-
-    // ------------------------------------------------------------------
-    // Menu GLPI 11
-    // ------------------------------------------------------------------
-
-    public static function getMenuName(): string
-    {
-        return 'Mail Manager';
-    }
-
-    public static function getMenuContent(): array
-    {
-        $search = self::getSearchURL(false);
-        $form   = self::getFormURL(false);
-
-        return [
-            'title'   => self::getMenuName(),
-            'page'    => $search,
-            'icon'    => self::getIcon(),
-            'options' => [
-                'mailobject' => [
-                    'title' => self::getTypeName(2),
-                    'page'  => $search,
-                    'links' => [
-                        'search' => $search,
-                        'add'    => $form,
-                    ],
-                ],
-            ],
-        ];
     }
 
     // ------------------------------------------------------------------

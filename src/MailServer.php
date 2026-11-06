@@ -78,37 +78,6 @@ class MailServer extends CommonDBTM
     }
 
     // ------------------------------------------------------------------
-    // Menu GLPI 11
-    // ------------------------------------------------------------------
-
-    public static function getMenuName(): string
-    {
-        return 'Mail Manager';
-    }
-
-    public static function getMenuContent(): array
-    {
-        $search = self::getSearchURL(false);
-        $form   = self::getFormURL(false);
-
-        return [
-            'title'   => self::getMenuName(),
-            'page'    => $search,
-            'icon'    => self::getIcon(),
-            'options' => [
-                'mailserver' => [
-                    'title' => self::getTypeName(2),
-                    'page'  => $search,
-                    'links' => [
-                        'search' => $search,
-                        'add'    => $form,
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    // ------------------------------------------------------------------
     // Formulaire GLPI 11 (Twig)
     // ------------------------------------------------------------------
 
