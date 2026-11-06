@@ -90,15 +90,13 @@ window.mailmanagerServer = {
 <div class="mb-3 row">
     <label class="col-xxl-4 col-form-label">{{ __('Domaines gérés', 'mailmanager') }}</label>
     <div class="col-xxl-8">
-        {{ fields.dropdownField('Domain', 'linked_domains_ids[]', linked_domains, __('Domaines', 'mailmanager'), {
-            'multiple': true,
-            'display_emptychoice': false,
-            'values': linked_domains
-        })|raw }}
-        {# Fallback natif si dropdownField ne supporte pas multiple #}
-        <select name="linked_domains_ids[]" class="form-select" multiple style="min-height:80px">
-            {% set all_domains = glpi_domains() is defined ? glpi_domains() : [] %}
-            {# Les domaines sont sélectionnés côté PHP via linked_domains #}
+        <select name="linked_domains_ids[]" class="form-select" multiple style="min-height:100px">
+            {% for domain in all_domains %}
+                <option value="{{ domain.id }}"
+                    {% if domain.id in linked_domains %}selected{% endif %}>
+                    {{ domain.name }}
+                </option>
+            {% endfor %}
         </select>
         <small class="text-muted">{{ __('Maintenez Ctrl pour sélection multiple', 'mailmanager') }}</small>
     </div>

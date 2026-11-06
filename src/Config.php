@@ -28,6 +28,21 @@ class Config extends CommonDBTM
         return $row ? $row['config_value'] : $default;
     }
 
+    public function display(array $options = []): void
+    {
+        $canedit = \Session::haveRight(Right::RIGHT_CONFIG, UPDATE);
+
+        \Glpi\Application\View\TemplateRenderer::getInstance()->display(
+            '@mailmanager/config.html.twig',
+            [
+                'canedit'              => $canedit,
+                'default_server_type'  => self::getConfig('default_server_type', 'imap'),
+                'accounts_plugin_type' => self::getConfig('accounts_plugin_type', 'mail'),
+                'config_url'           => \Plugin::getWebDir('mailmanager') . '/front/config.php',
+            ]
+        );
+    }
+
     public static function save(array $input): void
     {
         global $DB;

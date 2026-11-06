@@ -120,10 +120,17 @@ class MailServer extends CommonDBTM
             ? '\GlpiPlugin\Accounts\Account'
             : null;
 
-        // Domaines liés à ce serveur
+        // Domaines liés à ce serveur (IDs uniquement pour la sélection)
         $linkedDomains = [];
         if ($ID > 0) {
             $linkedDomains = MailServerDomain::getDomainsForServer($ID);
+        }
+
+        // Tous les domaines disponibles pour le <select multiple>
+        global $DB;
+        $allDomains = [];
+        foreach ($DB->request(['FROM' => 'glpi_domains', 'ORDER' => 'name']) as $row) {
+            $allDomains[] = ['id' => $row['id'], 'name' => $row['name']];
         }
 
         \Glpi\Application\View\TemplateRenderer::getInstance()->display(
@@ -137,6 +144,7 @@ class MailServer extends CommonDBTM
                 'password_in_out_types' => self::TYPES_WITH_PASSWORD_IN_OUT,
                 'accounts_class' => $accountsClass,
                 'linked_domains' => $linkedDomains,
+                'all_domains'    => $allDomains,
                 'webdir'         => Plugin::getWebDir('mailmanager'),
             ]
         );
