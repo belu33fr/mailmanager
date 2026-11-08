@@ -7,11 +7,40 @@
 <script>
 window.mailmanagerObject = {
     types: {{ mail_types|keys|json_encode|raw }},
-    currentType: '{{ item.fields['mail_type'] ?? 'mailbox' }}'
+    currentType: '{{ item.fields['mail_type'] ?? 'mailbox' }}',
+    ajaxUrl: '{{ ajax_url }}',
+    canCreateUser: {{ can_create_user ? 'true' : 'false' }},
+    itemId: {{ item.fields['id'] > 0 ? item.fields['id'] : 0 }}
 };
 </script>
 
 {{ fields.smallTitle(__('Identification', 'mailmanager')) }}
+
+{# Utilisateur GLPI (boîte mail) : en premier. Liste complète des utilisateurs autorisés,
+   y compris ceux sans profil (contacts), avec création à la volée. #}
+<div id="mm-top-user">
+    {% set create_user_btn %}
+        {% if can_create_user %}
+            <button type="button" class="btn btn-outline-secondary btn-sm mt-1" id="mm-user-create">
+                <i class="ti ti-plus me-1"></i>{{ __('Nouvel utilisateur', 'mailmanager') }}
+            </button>
+        {% endif %}
+    {% endset %}
+    {{ fields.dropdownField('User', 'users_id', item.fields['users_id'] ?? 0, __('Utilisateur GLPI', 'mailmanager'), {
+        'display_emptychoice': true,
+        'right': 'all',
+        'with_no_right': 1,
+        'add_field_html': create_user_btn,
+        'helper': __('Propriétaire de la boîte. Si vous saisissez d\'abord l\'adresse mail, l\'utilisateur est retrouvé automatiquement ; si vous choisissez l\'utilisateur, son adresse est proposée.', 'mailmanager')
+    }) }}
+</div>
+
+{# Adresse email #}
+{{ fields.textField('email', item.fields['email'] ?? '', __('Adresse mail', 'mailmanager'), {
+    'required': true,
+    'helper': __('Adresse complète : utilisateur@domaine.tld', 'mailmanager'),
+    'type': 'email'
+}) }}
 
 {# Type d'objet mail #}
 <div class="mb-3 row">
@@ -26,13 +55,6 @@ window.mailmanagerObject = {
         </select>
     </div>
 </div>
-
-{# Adresse email #}
-{{ fields.textField('email', item.fields['email'] ?? '', __('Adresse mail', 'mailmanager'), {
-    'required': true,
-    'helper': __('Adresse complète : utilisateur@domaine.tld', 'mailmanager'),
-    'type': 'email'
-}) }}
 
 {# Domaine #}
 {{ fields.dropdownField('Domain', 'domains_id', item.fields['domains_id'] ?? 0, __('Domaine', 'mailmanager'), {
@@ -53,12 +75,6 @@ window.mailmanagerObject = {
 <div id="mm-section-mailbox" class="mm-type-section">
 
     {{ fields.smallTitle(__('Boîte mail — Informations', 'mailmanager')) }}
-
-    {# Utilisateur GLPI associé #}
-    {{ fields.dropdownField('User', 'users_id', item.fields['users_id'] ?? 0, __('Utilisateur GLPI', 'mailmanager'), {
-        'display_emptychoice': true,
-        'right': 'all'
-    }) }}
 
     {# Nom à afficher #}
     {{ fields.textField('display_name', item.fields['display_name'] ?? default_display_name, __('Nom à afficher', 'mailmanager'), {
@@ -117,7 +133,7 @@ window.mailmanagerObject = {
         {{ fields.textareaField('autoreply_text', item.fields['autoreply_text'] ?? '', __('Message de réponse automatique', 'mailmanager')) }}
     </div>
 
-    {{ fields.smallTitle(__('Boîte mail — Informations Exchange/MS365', 'mailmanager')) }}
+    {{ fields.smallTitle(__('Boîte mail — Informations Exchange/MS365', 'mailmanager'), '', __('Reflet des informations enregistrées sur le serveur de messagerie. Les zones vides sont remplies depuis la fiche de l\'utilisateur.', 'mailmanager')) }}
 
     {{ fields.textField('job_title', item.fields['job_title'] ?? '', __('Fonction / Titre', 'mailmanager')) }}
     {{ fields.textField('department', item.fields['department'] ?? '', __('Service / Département', 'mailmanager')) }}
@@ -327,6 +343,37 @@ window.mailmanagerObject = {
 {{ fields.smallTitle(__('Notes', 'mailmanager')) }}
 {{ fields.textareaField('comment', item.fields['comment'] ?? '', __('Commentaire')) }}
 
+{# Création rapide d'un utilisateur GLPI (les champs n'ont pas de name : rien n'est envoyé avec la fiche) #}
+{% if can_create_user %}
+<div class="modal fade" id="mm-user-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="ti ti-user-plus me-2"></i>{{ __('Nouvel utilisateur', 'mailmanager') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('Fermer', 'mailmanager') }}"></button>
+            </div>
+            <div class="modal-body">
+                <div id="mm-uc-error" class="alert alert-danger" style="display:none"></div>
+                <div class="mb-2"><label class="form-label" for="mm-uc-realname">{{ __('Nom', 'mailmanager') }}</label><input type="text" class="form-control" id="mm-uc-realname" autocomplete="off" /></div>
+                <div class="mb-2"><label class="form-label" for="mm-uc-firstname">{{ __('Prénom', 'mailmanager') }}</label><input type="text" class="form-control" id="mm-uc-firstname" autocomplete="off" /></div>
+                <div class="mb-2"><label class="form-label" for="mm-uc-email">{{ __('Adresse mail', 'mailmanager') }}</label><input type="email" class="form-control" id="mm-uc-email" autocomplete="off" /></div>
+                <div class="mb-2"><label class="form-label" for="mm-uc-login">{{ __('Identifiant', 'mailmanager') }}</label><input type="text" class="form-control" id="mm-uc-login" autocomplete="off" placeholder="{{ __('Automatique si vide (partie avant @)', 'mailmanager') }}" /></div>
+                <div class="row">
+                    <div class="col-6 mb-2"><label class="form-label" for="mm-uc-phone">{{ __('Téléphone', 'mailmanager') }}</label><input type="text" class="form-control" id="mm-uc-phone" autocomplete="off" /></div>
+                    <div class="col-6 mb-2"><label class="form-label" for="mm-uc-mobile">{{ __('Mobile', 'mailmanager') }}</label><input type="text" class="form-control" id="mm-uc-mobile" autocomplete="off" /></div>
+                </div>
+                <small class="text-muted">{{ __('L\'utilisateur est créé sans mot de passe ni profil : il ne peut pas se connecter à GLPI.', 'mailmanager') }}</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Annuler', 'mailmanager') }}</button>
+                <button type="button" class="btn btn-primary" id="mm-uc-save"><i class="ti ti-device-floppy me-1"></i>{{ __('Créer', 'mailmanager') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script src="{{ webdir }}/public/help.fix.js"></script>
 <script src="{{ webdir }}/public/mailobject.form.js"></script>
 
 {% endblock more_fields %}

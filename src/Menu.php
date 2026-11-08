@@ -6,7 +6,7 @@ use CommonGLPI;
 use Session;
 
 /**
- * Menu principal « Mail Manager » (secteur propre, à côté de Gestion, Outils…).
+ * Menu principal « Gestion Mails » (secteur propre, à côté de Gestion, Outils…).
  * GLPI n'a que deux niveaux (secteur → entrées) : les entrées Serveurs mail,
  * Boîtes mail (et plus tard Hébergeurs mail) sont déclarées ici en mode
  * « multi-entrées », en un seul endroit.
@@ -20,12 +20,12 @@ class Menu extends CommonGLPI
 
     public static function getTypeName($nb = 0): string
     {
-        return 'Mail Manager';
+        return 'Gestion Mails';
     }
 
     public static function getMenuName(): string
     {
-        return 'Mail Manager';
+        return 'Gestion Mails';
     }
 
     public static function getIcon(): string

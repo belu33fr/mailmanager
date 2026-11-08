@@ -134,6 +134,8 @@ class MailObject extends CommonDBTM
                 'default_display_name'=> $defaultDisplayName,
                 'alias_target_types'  => self::ALIAS_TARGET_TYPES,
                 'webdir'              => Plugin::getWebDir('mailmanager'),
+                'ajax_url'            => Plugin::getWebDir('mailmanager') . '/ajax/mailmanager.php',
+                'can_create_user'     => \Session::haveRight('user', CREATE),
             ]
         );
 

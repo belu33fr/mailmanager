@@ -35,6 +35,7 @@ function plugin_mailmanager_install(): bool
                 `is_recursive`      TINYINT(1)   NOT NULL DEFAULT 0,
                 `groups_id`         INT UNSIGNED NOT NULL DEFAULT 0,
                 `groups_id_tech`    INT UNSIGNED NOT NULL DEFAULT 0,
+                `users_id_tech`     INT UNSIGNED NOT NULL DEFAULT 0,
                 `plugin_accounts_accounts_id` INT UNSIGNED NOT NULL DEFAULT 0,
                 `date_creation`     DATETIME DEFAULT NULL,
                 `date_mod`          DATETIME DEFAULT NULL,
@@ -48,6 +49,11 @@ function plugin_mailmanager_install(): bool
             DEFAULT CHARSET={$default_charset}
             COLLATE={$default_collation}
         ");
+    }
+
+    // Migration 0.2.0 : contact technique du serveur (utilisateur GLPI)
+    if ($DB->tableExists($table) && !$DB->fieldExists($table, 'users_id_tech')) {
+        $DB->doQuery("ALTER TABLE `$table` ADD `users_id_tech` INT UNSIGNED NOT NULL DEFAULT 0 AFTER `groups_id_tech`, ADD KEY `users_id_tech` (`users_id_tech`)");
     }
 
     // ----------------------------------------------------------------

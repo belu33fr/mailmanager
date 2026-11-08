@@ -115,6 +115,7 @@ class MailServer extends CommonDBTM
                 'linked_domains' => $linkedDomains,
                 'all_domains'    => $allDomains,
                 'webdir'         => Plugin::getWebDir('mailmanager'),
+                'ajax_url'       => Plugin::getWebDir('mailmanager') . '/ajax/mailmanager.php',
             ]
         );
 
@@ -224,6 +225,17 @@ class MailServer extends CommonDBTM
         ];
 
         $tab[] = [
+            'id'            => 18,
+            'table'         => 'glpi_users',
+            'field'         => 'name',
+            'name'          => __('Contact technique', 'mailmanager'),
+            'datatype'      => 'dropdown',
+            'right'         => 'all',
+            'massiveaction' => true,
+            'joinparams'    => ['jointype' => 'field', 'linkfield' => 'users_id_tech'],
+        ];
+
+        $tab[] = [
             'id'            => 80,
             'table'         => 'glpi_entities',
             'field'         => 'completename',
@@ -267,6 +279,45 @@ class MailServer extends CommonDBTM
     }
 
     // ------------------------------------------------------------------
+    // Validation — le contact technique est obligatoire
+    // ------------------------------------------------------------------
+
+    public function prepareInputForAdd($input)
+    {
+        $input = parent::prepareInputForAdd($input);
+        if ($input === false) {
+            return false;
+        }
+        if ((int) ($input['users_id_tech'] ?? 0) <= 0) {
+            return $this->refuseMissingTechContact();
+        }
+        return $input;
+    }
+
+    public function prepareInputForUpdate($input)
+    {
+        $input = parent::prepareInputForUpdate($input);
+        if ($input === false) {
+            return false;
+        }
+        // Mise à jour partielle (action de masse, etc.) : on ne contrôle que si le champ est envoyé
+        if (array_key_exists('users_id_tech', $input) && (int) $input['users_id_tech'] <= 0) {
+            return $this->refuseMissingTechContact();
+        }
+        return $input;
+    }
+
+    private function refuseMissingTechContact(): bool
+    {
+        Session::addMessageAfterRedirect(
+            __('Le contact technique est obligatoire.', 'mailmanager'),
+            false,
+            ERROR
+        );
+        return false;
+    }
+
+    // ------------------------------------------------------------------
     // Sauvegarde — liaison domaines
     // ------------------------------------------------------------------
 
@@ -282,8 +333,11 @@ class MailServer extends CommonDBTM
 
     private function saveDomainLinks(int $serverId): void
     {
-        if (!isset($_POST['linked_domains_ids'])) return;
-        $domainIds = array_map('intval', (array)$_POST['linked_domains_ids']);
+        // Le formulaire envoie toujours _linked_domains_defined : permet de vider la liste
+        if (!isset($_POST['linked_domains_ids']) && !isset($_POST['_linked_domains_defined'])) {
+            return;
+        }
+        $domainIds = array_map('intval', (array)($_POST['linked_domains_ids'] ?? []));
         MailServerDomain::syncForServer($serverId, $domainIds);
     }
 }

@@ -7,7 +7,8 @@
 <script>
 window.mailmanagerServer = {
     defaultPorts: {{ default_ports|raw }},
-    passwordInOutTypes: {{ password_in_out_types|json_encode|raw }}
+    passwordInOutTypes: {{ password_in_out_types|json_encode|raw }},
+    ajaxUrl: '{{ ajax_url }}'
 };
 </script>
 
@@ -84,45 +85,81 @@ window.mailmanagerServer = {
     </div>
 </div>
 
+{# Contact technique (obligatoire) : déduit du compte d'accès, modifiable à la main #}
+{{ fields.dropdownField('User', 'users_id_tech', item.fields['users_id_tech'] ?? 0, __('Contact technique', 'mailmanager') ~ ' *', {
+    'display_emptychoice': true,
+    'right': 'all',
+    'with_no_right': 1,
+    'required': true,
+    'helper': __('Personne à contacter pour ce serveur (obligatoire). Proposé automatiquement à partir du compte d\'accès ci-dessus ; vous pouvez choisir un autre utilisateur.', 'mailmanager')
+}) }}
+<div id="mm-tech-hint" class="mb-3 row" style="display:none">
+    <div class="col-xxl-8 offset-xxl-4"><small class="text-muted"></small></div>
+</div>
+
 {{ fields.smallTitle(__('Organisation', 'mailmanager')) }}
 
-{# Domaines liés #}
-<div class="mb-3 row">
+{# Domaines gérés : liste déroulante avec recherche, puis boutons Ajouter / Retirer #}
+<div class="mb-3 row" id="mm-domains">
     <label class="col-xxl-4 col-form-label">{{ __('Domaines gérés', 'mailmanager') }}</label>
     <div class="col-xxl-8">
-        <select name="linked_domains_ids[]" class="form-select" multiple style="min-height:100px">
+        <input type="hidden" name="_linked_domains_defined" value="1" />
+
+        <div class="mb-2">
+            <select id="mm-dom-available" class="form-select" data-placeholder="{{ __('Rechercher un domaine…', 'mailmanager') }}">
+                <option value=""></option>
+                {% for domain in all_domains %}
+                    {% if domain.id not in linked_domains %}
+                        <option value="{{ domain.id }}">{{ domain.name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="d-flex align-items-center gap-2 mb-2">
+            <button type="button" id="mm-dom-add" class="btn btn-outline-primary btn-sm">
+                <i class="ti ti-arrow-down me-1"></i>{{ __('Ajouter', 'mailmanager') }}
+            </button>
+            <button type="button" id="mm-dom-remove" class="btn btn-outline-danger btn-sm">
+                <i class="ti ti-arrow-up me-1"></i>{{ __('Retirer la sélection', 'mailmanager') }}
+            </button>
+            <small class="text-muted ms-auto" id="mm-dom-count"></small>
+        </div>
+
+        <select id="mm-dom-selected" name="linked_domains_ids[]" class="form-select" multiple size="6" style="min-height:130px">
             {% for domain in all_domains %}
-                <option value="{{ domain.id }}"
-                    {% if domain.id in linked_domains %}selected{% endif %}>
-                    {{ domain.name }}
-                </option>
+                {% if domain.id in linked_domains %}
+                    <option value="{{ domain.id }}" selected>{{ domain.name }}</option>
+                {% endif %}
             {% endfor %}
         </select>
-        <small class="text-muted">{{ __('Maintenez Ctrl pour sélection multiple', 'mailmanager') }}</small>
+        <small class="text-muted">{{ __('Choisissez un domaine dans la liste puis « Ajouter ». Double-clic ou « Retirer la sélection » pour l\'enlever.', 'mailmanager') }}</small>
     </div>
 </div>
 
 {# État #}
 {{ fields.dropdownField('State', 'states_id', item.fields['states_id'] ?? 0, __('État'), {
-    'display_emptychoice': true,
-    'condition': {'is_visible_computer': 1}
+    'display_emptychoice': true
 }) }}
 
 {# Groupe #}
-{{ fields.dropdownField('Group', 'groups_id', item.fields['groups_id'] ?? 0, __('Groupe'), {
+{{ fields.dropdownField('Group', 'groups_id', item.fields['groups_id'] ?? 0, __('Groupe propriétaire', 'mailmanager'), {
     'display_emptychoice': true,
-    'only_my_groups': false
+    'only_my_groups': false,
+    'helper': __('Groupe auquel appartient ce serveur (service ou entité responsable).', 'mailmanager')
 }) }}
 
 {# Groupe technique #}
-{{ fields.dropdownField('Group', 'groups_id_tech', item.fields['groups_id_tech'] ?? 0, __('Groupe chargé du suivi'), {
+{{ fields.dropdownField('Group', 'groups_id_tech', item.fields['groups_id_tech'] ?? 0, __('Groupe technique', 'mailmanager'), {
     'display_emptychoice': true,
-    'only_my_groups': false
+    'only_my_groups': false,
+    'helper': __('Groupe chargé de l\'administration et du suivi technique de ce serveur.', 'mailmanager')
 }) }}
 
 {{ fields.smallTitle(__('Notes', 'mailmanager')) }}
 {{ fields.textareaField('comment', item.fields['comment'] ?? '', __('Commentaire')) }}
 
+<script src="{{ webdir }}/public/help.fix.js"></script>
 <script src="{{ webdir }}/public/mailserver.form.js"></script>
 
 {% endblock more_fields %}
