@@ -7,10 +7,10 @@
 <div class="card-body">
 {% include '@mailmanager/mailserver.part_server.html.twig' %}
 
-<div id="mm-params" data-type="{{ item.fields['server_type'] }}" data-ports='{{ default_ports|raw }}'>
-{% if item.fields['server_type'] in ['exchange', 'ms365'] %}
-    <div class="text-muted mb-3">{{ __('Exchange et MS365 : le chiffrement et le port sont imposés par le service, rien à paramétrer ici.', 'mailmanager') }}</div>
-{% else %}
+<div id="mm-params" data-type="{{ item.fields['server_type'] }}" data-ports='{{ default_ports|raw }}' data-pwtypes='{{ password_in_out_types|json_encode|raw }}'>
+{% set fixed_net = item.fields['server_type'] in ['exchange', 'ms365'] %}
+<div id="mm-network-none" class="text-muted mb-3" style="{{ fixed_net ? '' : 'display:none' }}">{{ __('Exchange et MS365 : le chiffrement et le port sont imposés par le service, rien à paramétrer ici.', 'mailmanager') }}</div>
+<div id="mm-network-fields" style="{{ fixed_net ? 'display:none' : '' }}">
 {# Chiffrement #}
 <div class="mb-3 row">
     <label class="col-xxl-4 col-form-label">{{ __('Chiffrement', 'mailmanager') }}</label>
@@ -31,11 +31,11 @@
     'id': 'mm-port',
     'helper': __('Laissez 0 pour utiliser le port par défaut du type/chiffrement', 'mailmanager')
 }) }}
-{% endif %}
 </div>
-{% if item.fields['server_type'] in password_in_out_types %}
+</div>
+{% set pw_visible = item.fields['server_type'] in password_in_out_types %}
 {# Password In = Out (pertinent pour SMTP) #}
-<div id="mm-password-in-out-section" class="mb-3 row">
+<div id="mm-password-in-out-section" class="mb-3 row" style="{{ pw_visible ? '' : 'display:none' }}">
     <label class="col-xxl-4 col-form-label">{{ __('Mot de passe identique entrée/sortie', 'mailmanager') }}</label>
     <div class="col-xxl-8 d-flex align-items-center">
         <input type="hidden" name="password_in_out" value="0" />
@@ -44,8 +44,6 @@
         <small class="text-muted ms-2">{{ __('Le même compte sert pour la réception et l\'envoi', 'mailmanager') }}</small>
     </div>
 </div>
-
-{% endif %}
 
 {% include '@mailmanager/mailserver.part_accounts.html.twig' %}
 </div>

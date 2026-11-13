@@ -173,15 +173,32 @@
         var wrap = document.getElementById('mm-params');
         if (!wrap || wrap.dataset.mmInit === '1') return;
         wrap.dataset.mmInit = '1';
-        var ports = {};
+        var ports = {}, pwTypes = [];
         try { ports = JSON.parse(wrap.getAttribute('data-ports') || '{}'); } catch (e) { /* ignore */ }
-        var type = wrap.getAttribute('data-type');
+        try { pwTypes = JSON.parse(wrap.getAttribute('data-pwtypes') || '[]'); } catch (e) { /* ignore */ }
+        var typeSel = document.getElementById('mm-server-type');
         var enc  = document.getElementById('mm-encryption');
         var port = document.getElementById('mm-port');
-        if (!enc || !port) return;
-        enc.addEventListener('change', function () {
-            if (ports[type] && ports[type][enc.value]) { port.value = ports[type][enc.value]; }
-        });
+        var net  = document.getElementById('mm-network-fields');
+        var none = document.getElementById('mm-network-none');
+        var pw   = document.getElementById('mm-password-in-out-section');
+        var type = wrap.getAttribute('data-type');
+
+        function applyType() {
+            var fixed = (type === 'exchange' || type === 'ms365');
+            if (net)  net.style.display  = fixed ? 'none' : '';
+            if (none) none.style.display = fixed ? '' : 'none';
+            if (pw)   pw.style.display   = pwTypes.indexOf(type) >= 0 ? '' : 'none';
+        }
+        function applyPort() {
+            if (enc && port && ports[type] && ports[type][enc.value]) { port.value = ports[type][enc.value]; }
+        }
+        if (typeSel) {
+            type = typeSel.value;
+            typeSel.addEventListener('change', function () { type = typeSel.value; applyType(); applyPort(); });
+        }
+        if (enc) enc.addEventListener('change', applyPort);
+        applyType();
     }
 
     function tryInit() { initDomains(); initTechContact(); initParams(); }
