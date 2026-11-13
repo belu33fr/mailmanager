@@ -218,5 +218,17 @@
 })();
 
     }
-    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', mmBoot); } else { mmBoot(); }
+    // La fiche est souvent insérée après le chargement (onglet AJAX de GLPI) :
+    // on initialise dès que son marqueur apparaît, une seule fois par insertion.
+    function mmTry() {
+        var el = document.querySelector('#mm-domains');
+        if (!el || el.dataset.mmInit === '1') return;
+        el.dataset.mmInit = '1';
+        mmBoot();
+    }
+    mmTry();
+    document.addEventListener('DOMContentLoaded', mmTry);
+    if (window.MutationObserver) {
+        new MutationObserver(mmTry).observe(document.documentElement, { childList: true, subtree: true });
+    }
 })();
