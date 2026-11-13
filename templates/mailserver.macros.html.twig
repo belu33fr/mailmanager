@@ -1,6 +1,9 @@
-{# Titre de section : bandeau bleu clair, texte bleu en majuscules et gras (style « Carte réseau » de GLPI) #}
-{% macro section(label, first = false) %}
+{# Titre de section : même rendu que les en-têtes « subheader » de GLPI (variables de thème GLPI) #}
+{% macro section(label, icon = '', first = false) %}
 <div class="col-12 {{ first ? 'mt-0' : 'mt-3' }} mb-2">
-    <div class="bg-primary-lt text-primary text-uppercase fw-bold px-3 py-2 rounded-1">{{ label }}</div>
+    <div class="px-3 py-2 fw-bold text-center text-uppercase rounded-1"
+         style="background-color: var(--glpi-form-header-bg); color: var(--glpi-form-header-fg);">
+        {% if icon %}<i class="{{ icon }} me-2"></i>{% endif %}{{ label }}
+    </div>
 </div>
 {% endmacro %}
