@@ -6,7 +6,7 @@
 {% endif %}
 <div class="card-body">
 <div class="row flex-row">
-{{ fields.smallTitle(__('Domaines', 'mailmanager')) }}
+{{ fields.largeTitle(__('Domaines', 'mailmanager'), 'ti ti-world', true) }}
 {% set domains_block %}
 <input type="hidden" name="_linked_domains_defined" value="1" />
 
@@ -50,7 +50,7 @@
     'container_id': 'mm-domains'
 }) }}
 
-{{ fields.smallTitle(__('Rattachement', 'mailmanager')) }}
+{{ fields.largeTitle(__('Rattachement', 'mailmanager'), 'ti ti-building') }}
 {# État #}
 {{ fields.dropdownField('State', 'states_id', item.fields['states_id'] ?? 0, __('État'), {
     'display_emptychoice': true
