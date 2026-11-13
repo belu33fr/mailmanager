@@ -8,8 +8,6 @@
 {% if item.isNewItem() %}
 {% include '@mailmanager/mailserver.part_server.html.twig' %}
 {% include '@mailmanager/mailserver.part_accounts.html.twig' %}
-{% else %}
-<div class="text-muted mb-3"><i class="ti ti-info-circle me-1"></i>{{ __('Type, FQDN, comptes et contact technique : onglet « Paramétrage ».', 'mailmanager') }}</div>
 {% endif %}
 
 {% endblock more_fields %}

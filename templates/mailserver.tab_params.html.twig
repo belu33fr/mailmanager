@@ -5,47 +5,41 @@
     <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}" />
 {% endif %}
 <div class="card-body">
+<div class="row flex-row">
 {% include '@mailmanager/mailserver.part_server.html.twig' %}
 
-<div id="mm-params" data-type="{{ item.fields['server_type'] }}" data-ports='{{ default_ports|raw }}' data-pwtypes='{{ password_in_out_types|json_encode|raw }}'>
 {% set fixed_net = item.fields['server_type'] in ['exchange', 'ms365'] %}
-<div id="mm-network-none" class="text-muted mb-3" style="{{ fixed_net ? '' : 'display:none' }}">{{ __('Exchange et MS365 : le chiffrement et le port sont imposés par le service, rien à paramétrer ici.', 'mailmanager') }}</div>
-<div id="mm-network-fields" style="{{ fixed_net ? 'display:none' : '' }}">
-{# Chiffrement #}
-<div class="mb-3 row">
-    <label class="col-xxl-4 col-form-label">{{ __('Chiffrement', 'mailmanager') }}</label>
-    <div class="col-xxl-8">
-        <select name="encryption" id="mm-encryption" class="form-select">
-            {% for enc, label in encryptions %}
-                <option value="{{ enc }}" {% if item.fields['encryption'] == enc %}selected{% endif %}>
-                    {{ label }}
-                </option>
-            {% endfor %}
-        </select>
+<div id="mm-params" class="col-12" data-type="{{ item.fields['server_type'] }}" data-ports='{{ default_ports|raw }}' data-pwtypes='{{ password_in_out_types|json_encode|raw }}'>
+    <div id="mm-network-none" class="text-muted mb-2 ms-3" style="{{ fixed_net ? '' : 'display:none' }}">
+        <i class="ti ti-info-circle me-1"></i>{{ __('Exchange et MS365 : le chiffrement et le port sont imposés par le service, rien à paramétrer.', 'mailmanager') }}
+    </div>
+    <div id="mm-network-fields" style="{{ fixed_net ? 'display:none' : '' }}">
+        <div class="row flex-row">
+            {% set enc_select %}
+            <select name="encryption" id="mm-encryption" class="form-select">
+                {% for enc, label in encryptions %}
+                    <option value="{{ enc }}" {% if item.fields['encryption'] == enc %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            {% endset %}
+            {{ fields.field('encryption', enc_select, __('Chiffrement', 'mailmanager')) }}
+
+            {{ fields.numberField('port', item.fields['port'] ?? 0, __('Port', 'mailmanager'), {
+                'min': 1, 'max': 65535,
+                'id': 'mm-port',
+                'helper': __('Laissez 0 pour utiliser le port par défaut du type/chiffrement', 'mailmanager')
+            }) }}
+        </div>
     </div>
 </div>
 
-{# Port #}
-{{ fields.numberField('port', item.fields['port'] ?? 0, __('Port', 'mailmanager'), {
-    'min': 1, 'max': 65535,
-    'id': 'mm-port',
-    'helper': __('Laissez 0 pour utiliser le port par défaut du type/chiffrement', 'mailmanager')
+{{ fields.checkboxField('password_in_out', item.fields['password_in_out'] ?? 0, __('Mot de passe identique entrée/sortie', 'mailmanager'), {
+    'container_id': 'mm-password-in-out-section',
+    'helper': __('Le même compte sert pour la réception et l\'envoi', 'mailmanager')
 }) }}
-</div>
-</div>
-{% set pw_visible = item.fields['server_type'] in password_in_out_types %}
-{# Password In = Out (pertinent pour SMTP) #}
-<div id="mm-password-in-out-section" class="mb-3 row" style="{{ pw_visible ? '' : 'display:none' }}">
-    <label class="col-xxl-4 col-form-label">{{ __('Mot de passe identique entrée/sortie', 'mailmanager') }}</label>
-    <div class="col-xxl-8 d-flex align-items-center">
-        <input type="hidden" name="password_in_out" value="0" />
-        <input type="checkbox" name="password_in_out" id="mm-password-in-out" class="form-check-input"
-               value="1" {% if item.fields['password_in_out'] ?? 0 %}checked{% endif %} />
-        <small class="text-muted ms-2">{{ __('Le même compte sert pour la réception et l\'envoi', 'mailmanager') }}</small>
-    </div>
-</div>
 
 {% include '@mailmanager/mailserver.part_accounts.html.twig' %}
+</div>
 </div>
 {% if canedit %}
     <div class="card-footer d-flex justify-content-end">

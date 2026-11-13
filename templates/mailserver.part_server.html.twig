@@ -1,20 +1,15 @@
 {% import "components/form/fields_macros.html.twig" as fields %}
 {{ fields.smallTitle(__('Serveur', 'mailmanager')) }}
-{# Type de serveur #}
-<div class="mb-3 row">
-    <label class="col-xxl-4 col-form-label">{{ __('Type de serveur', 'mailmanager') }} *</label>
-    <div class="col-xxl-8">
-        <select name="server_type" id="mm-server-type" class="form-select" required>
-            {% for type, label in server_types %}
-                <option value="{{ type }}" {% if item.fields['server_type'] == type %}selected{% endif %}>
-                    {{ label }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
-</div>
 
-{# FQDN #}
+{% set type_select %}
+<select name="server_type" id="mm-server-type" class="form-select" required>
+    {% for type, label in server_types %}
+        <option value="{{ type }}" {% if item.fields['server_type'] == type %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+</select>
+{% endset %}
+{{ fields.field('server_type', type_select, __('Type de serveur', 'mailmanager') ~ ' *', {'id': 'mm-server-type'}) }}
+
 {{ fields.textField('fqdn', item.fields['fqdn'] ?? '', __('FQDN / Hôte', 'mailmanager'), {
     'required': true,
     'helper': __('Ex: mail.example.com, smtp.office365.com', 'mailmanager')

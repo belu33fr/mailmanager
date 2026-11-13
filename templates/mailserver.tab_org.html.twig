@@ -5,11 +5,10 @@
     <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}" />
 {% endif %}
 <div class="card-body">
-{# Domaines gérés : liste déroulante avec recherche, puis boutons Ajouter / Retirer #}
-<div class="mb-3 row" id="mm-domains">
-    <label class="col-xxl-4 col-form-label">{{ __('Domaines gérés', 'mailmanager') }}</label>
-    <div class="col-xxl-8">
-        <input type="hidden" name="_linked_domains_defined" value="1" />
+<div class="row flex-row">
+{{ fields.smallTitle(__('Domaines', 'mailmanager')) }}
+{% set domains_block %}
+<input type="hidden" name="_linked_domains_defined" value="1" />
 
         <div class="mb-2">
             <select id="mm-dom-available" class="form-select" data-placeholder="{{ __('Rechercher un domaine…', 'mailmanager') }}">
@@ -43,9 +42,15 @@
             {% endfor %}
         </select>
         <small class="text-muted">{{ __('Choisissez un domaine dans la liste puis « Ajouter ». Double-clic ou « Retirer » pour enlever la sélection, « Efface liste » pour tout vider.', 'mailmanager') }}</small>
-    </div>
-</div>
+{% endset %}
+{{ fields.field('linked_domains', domains_block, __('Domaines gérés', 'mailmanager'), {
+    'full_width': true,
+    'label_class': 'col-xxl-2',
+    'input_class': 'col-xxl-10',
+    'container_id': 'mm-domains'
+}) }}
 
+{{ fields.smallTitle(__('Rattachement', 'mailmanager')) }}
 {# État #}
 {{ fields.dropdownField('State', 'states_id', item.fields['states_id'] ?? 0, __('État'), {
     'display_emptychoice': true
@@ -64,6 +69,8 @@
     'only_my_groups': false,
     'helper': __('Groupe chargé de l\'administration et du suivi technique de ce serveur.', 'mailmanager')
 }) }}
+
+</div>
 </div>
 {% if canedit %}
     <div class="card-footer d-flex justify-content-end">

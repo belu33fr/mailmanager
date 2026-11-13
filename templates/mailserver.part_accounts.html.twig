@@ -17,7 +17,7 @@ window.mailmanagerServer = {
         {'display_emptychoice': true}
     ) }}
 {% else %}
-    <div class="alert alert-warning">
+    <div class="alert alert-warning col-12">
         <i class="ti ti-alert-triangle me-2"></i>
         {{ __('Plugin Accounts requis pour la gestion des mots de passe.', 'mailmanager') }}
     </div>
@@ -31,6 +31,4 @@ window.mailmanagerServer = {
     'required': true,
     'helper': __('Personne à contacter pour ce serveur (obligatoire). Proposé automatiquement à partir du compte administrateur choisi ci-dessus (utilisateur ou technicien qui y est rattaché) ; vous pouvez choisir un autre utilisateur.', 'mailmanager')
 }) }}
-<div id="mm-tech-hint" class="mb-3 row" style="display:none">
-    <div class="col-xxl-8 offset-xxl-4"><small class="text-muted"></small></div>
-</div>
+<div id="mm-tech-hint" class="col-12 mb-2" style="display:none"><small class="text-muted ms-3"></small></div>
