@@ -109,7 +109,7 @@
         var data = getData();
         var account = document.querySelector('select[name="plugin_accounts_accounts_id"]');
         var tech    = document.querySelector('select[name="users_id_tech"]');
-        var hint    = document.querySelector('#mm-tech-hint small');
+        var hint    = document.getElementById('mm-tech-hint');
         var hintRow = document.getElementById('mm-tech-hint');
         if (!account || !tech || !data.ajaxUrl) return;
         if (tech.dataset.mmInit === '1') return;
