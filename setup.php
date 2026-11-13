@@ -4,7 +4,7 @@
  * MailManager — Plugin GLPI 11 de gestion des boîtes mail et serveurs mail
  */
 
-define('PLUGIN_MAILMANAGER_VERSION', '0.2.3');
+define('PLUGIN_MAILMANAGER_VERSION', '0.2.4');
 define('PLUGIN_MAILMANAGER_MIN_GLPI', '11.0.0');
 define('PLUGIN_MAILMANAGER_MAX_GLPI', '12.0.0');
 

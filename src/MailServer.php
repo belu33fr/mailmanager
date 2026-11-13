@@ -77,6 +77,15 @@ class MailServer extends CommonDBTM
         return Plugin::getWebDir('mailmanager', $full) . '/front/mailserver.php';
     }
 
+    public function defineTabs($options = [])
+    {
+        $ong = [];
+        $this->addDefaultFormTab($ong);
+        $this->addStandardTab(MailServerTab::class, $ong, $options);
+        $this->addStandardTab('Log', $ong, $options);
+        return $ong;
+    }
+
     // ------------------------------------------------------------------
     // Formulaire GLPI 11 (Twig)
     // ------------------------------------------------------------------
@@ -89,19 +98,6 @@ class MailServer extends CommonDBTM
             ? '\GlpiPlugin\Accounts\Account'
             : null;
 
-        // Domaines liés à ce serveur (IDs uniquement pour la sélection)
-        $linkedDomains = [];
-        if ($ID > 0) {
-            $linkedDomains = MailServerDomain::getDomainsForServer($ID);
-        }
-
-        // Tous les domaines disponibles pour le <select multiple>
-        global $DB;
-        $allDomains = [];
-        foreach ($DB->request(['FROM' => 'glpi_domains', 'ORDER' => 'name']) as $row) {
-            $allDomains[] = ['id' => $row['id'], 'name' => $row['name']];
-        }
-
         \Glpi\Application\View\TemplateRenderer::getInstance()->display(
             '@mailmanager/mailserver.form.html.twig',
             [
@@ -112,8 +108,6 @@ class MailServer extends CommonDBTM
                 'default_ports'  => json_encode(self::DEFAULT_PORTS),
                 'password_in_out_types' => self::TYPES_WITH_PASSWORD_IN_OUT,
                 'accounts_class' => $accountsClass,
-                'linked_domains' => $linkedDomains,
-                'all_domains'    => $allDomains,
                 'webdir'         => Plugin::getWebDir('mailmanager'),
                 'ajax_url'       => Plugin::getWebDir('mailmanager') . '/ajax/mailmanager.php',
             ]
@@ -304,6 +298,11 @@ class MailServer extends CommonDBTM
         if (array_key_exists('users_id_tech', $input) && (int) $input['users_id_tech'] <= 0) {
             return $this->refuseMissingTechContact();
         }
+        // L'onglet Organisation peut ne changer que les domaines : post_updateItem ne serait alors
+        // pas appelé par GLPI (aucun champ modifié) ; on synchronise donc ici.
+        if (isset($_POST['_linked_domains_defined']) && (int) ($input['id'] ?? 0) > 0) {
+            $this->saveDomainLinks((int) $input['id']);
+        }
         return $input;
     }
 
@@ -322,11 +321,6 @@ class MailServer extends CommonDBTM
     // ------------------------------------------------------------------
 
     public function post_addItem()
-    {
-        $this->saveDomainLinks((int)$this->fields['id']);
-    }
-
-    public function post_updateItem($history = true)
     {
         $this->saveDomainLinks((int)$this->fields['id']);
     }

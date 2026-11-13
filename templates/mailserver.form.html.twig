@@ -12,18 +12,7 @@ window.mailmanagerServer = {
 };
 </script>
 
-{# Onglets internes : un seul formulaire, un seul bouton Sauvegarder #}
-<div class="d-flex align-items-start gap-3">
-<ul class="nav nav-tabs flex-column flex-shrink-0 border-bottom-0" id="mm-tabs" role="tablist" style="min-width:13rem">
-    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#mm-tab-server" role="tab"><i class="ti ti-server me-1"></i>{{ __('Serveur', 'mailmanager') }}</a></li>
-    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#mm-tab-params" role="tab"><i class="ti ti-adjustments me-1"></i>{{ __('Paramétrage', 'mailmanager') }}</a></li>
-    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#mm-tab-accounts" role="tab"><i class="ti ti-key me-1"></i>{{ __('Comptes d\'accès', 'mailmanager') }}</a></li>
-    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#mm-tab-org" role="tab"><i class="ti ti-building me-1"></i>{{ __('Organisation', 'mailmanager') }}</a></li>
-</ul>
-
-<div class="tab-content flex-grow-1 border-start ps-3">
-
-<div class="tab-pane fade show active" id="mm-tab-server" role="tabpanel">
+{{ fields.smallTitle(__('Serveur', 'mailmanager')) }}
 {# Type de serveur #}
 <div class="mb-3 row">
     <label class="col-xxl-4 col-form-label">{{ __('Type de serveur', 'mailmanager') }} *</label>
@@ -44,48 +33,8 @@ window.mailmanagerServer = {
     'helper': __('Ex: mail.example.com, smtp.office365.com', 'mailmanager')
 }) }}
 
-</div>
 
-<div class="tab-pane fade" id="mm-tab-params" role="tabpanel">
-<div id="mm-network-fields">
-{# Chiffrement #}
-<div class="mb-3 row">
-    <label class="col-xxl-4 col-form-label">{{ __('Chiffrement', 'mailmanager') }}</label>
-    <div class="col-xxl-8">
-        <select name="encryption" id="mm-encryption" class="form-select">
-            {% for enc, label in encryptions %}
-                <option value="{{ enc }}" {% if item.fields['encryption'] == enc %}selected{% endif %}>
-                    {{ label }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
-</div>
-
-{# Port #}
-{{ fields.numberField('port', item.fields['port'] ?? 0, __('Port', 'mailmanager'), {
-    'min': 1, 'max': 65535,
-    'id': 'mm-port',
-    'helper': __('Laissez 0 pour utiliser le port par défaut du type/chiffrement', 'mailmanager')
-}) }}
-
-</div>
-<div id="mm-network-none" class="text-muted mb-3" style="display:none">
-    {{ __('Exchange et MS365 : le chiffrement et le port sont imposés par le service, rien à paramétrer ici.', 'mailmanager') }}
-</div>
-{# Password In = Out (pertinent pour SMTP) #}
-<div id="mm-password-in-out-section" class="mb-3 row" style="display:none">
-    <label class="col-xxl-4 col-form-label">{{ __('Mot de passe identique entrée/sortie', 'mailmanager') }}</label>
-    <div class="col-xxl-8 d-flex align-items-center">
-        <input type="checkbox" name="password_in_out" id="mm-password-in-out" class="form-check-input"
-               value="1" {% if item.fields['password_in_out'] ?? 0 %}checked{% endif %} />
-        <small class="text-muted ms-2">{{ __('Le même compte sert pour la réception et l\'envoi', 'mailmanager') }}</small>
-    </div>
-</div>
-
-</div>
-
-<div class="tab-pane fade" id="mm-tab-accounts" role="tabpanel">
+{{ fields.smallTitle(__('Comptes d\'accès', 'mailmanager')) }}
 {% if accounts_class %}
     {{ fields.dropdownField(
         accounts_class,
@@ -107,78 +56,11 @@ window.mailmanagerServer = {
     'right': 'all',
     'with_no_right': 1,
     'required': true,
-    'helper': __('Personne à contacter pour ce serveur (obligatoire). Proposé automatiquement à partir du compte administrateur choisi dans cet onglet (utilisateur ou technicien qui y est rattaché) ; vous pouvez choisir un autre utilisateur.', 'mailmanager')
+    'helper': __('Personne à contacter pour ce serveur (obligatoire). Proposé automatiquement à partir du compte administrateur choisi ci-dessus (utilisateur ou technicien qui y est rattaché) ; vous pouvez choisir un autre utilisateur.', 'mailmanager')
 }) }}
 <div id="mm-tech-hint" class="mb-3 row" style="display:none">
     <div class="col-xxl-8 offset-xxl-4"><small class="text-muted"></small></div>
 </div>
 
-</div>
-
-<div class="tab-pane fade" id="mm-tab-org" role="tabpanel">
-{# Domaines gérés : liste déroulante avec recherche, puis boutons Ajouter / Retirer #}
-<div class="mb-3 row" id="mm-domains">
-    <label class="col-xxl-4 col-form-label">{{ __('Domaines gérés', 'mailmanager') }}</label>
-    <div class="col-xxl-8">
-        <input type="hidden" name="_linked_domains_defined" value="1" />
-
-        <div class="mb-2">
-            <select id="mm-dom-available" class="form-select" data-placeholder="{{ __('Rechercher un domaine…', 'mailmanager') }}">
-                <option value=""></option>
-                {% for domain in all_domains %}
-                    {% if domain.id not in linked_domains %}
-                        <option value="{{ domain.id }}">{{ domain.name }}</option>
-                    {% endif %}
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="d-flex align-items-center gap-2 mb-2">
-            <button type="button" id="mm-dom-add" class="btn btn-primary">
-                <i class="ti ti-plus me-1"></i>{{ __('Ajouter', 'mailmanager') }}
-            </button>
-            <button type="button" id="mm-dom-remove" class="btn btn-primary">
-                <i class="ti ti-minus me-1"></i>{{ __('Retirer', 'mailmanager') }}
-            </button>
-            <button type="button" id="mm-dom-clear" class="btn btn-primary">
-                <i class="ti ti-trash me-1"></i>{{ __('Efface liste', 'mailmanager') }}
-            </button>
-            <small class="text-muted ms-auto" id="mm-dom-count"></small>
-        </div>
-
-        <select id="mm-dom-selected" name="linked_domains_ids[]" class="form-select" multiple size="6" style="min-height:130px">
-            {% for domain in all_domains %}
-                {% if domain.id in linked_domains %}
-                    <option value="{{ domain.id }}" selected>{{ domain.name }}</option>
-                {% endif %}
-            {% endfor %}
-        </select>
-        <small class="text-muted">{{ __('Choisissez un domaine dans la liste puis « Ajouter ». Double-clic ou « Retirer » pour enlever la sélection, « Efface liste » pour tout vider.', 'mailmanager') }}</small>
-    </div>
-</div>
-
-{# État #}
-{{ fields.dropdownField('State', 'states_id', item.fields['states_id'] ?? 0, __('État'), {
-    'display_emptychoice': true
-}) }}
-
-{# Groupe #}
-{{ fields.dropdownField('Group', 'groups_id', item.fields['groups_id'] ?? 0, __('Groupe propriétaire', 'mailmanager'), {
-    'display_emptychoice': true,
-    'only_my_groups': false,
-    'helper': __('Groupe auquel appartient ce serveur (service ou entité responsable).', 'mailmanager')
-}) }}
-
-{# Groupe technique #}
-{{ fields.dropdownField('Group', 'groups_id_tech', item.fields['groups_id_tech'] ?? 0, __('Groupe technique', 'mailmanager'), {
-    'display_emptychoice': true,
-    'only_my_groups': false,
-    'helper': __('Groupe chargé de l\'administration et du suivi technique de ce serveur.', 'mailmanager')
-}) }}
-
-</div>
-
-</div>
-</div>
 
 {% endblock more_fields %}

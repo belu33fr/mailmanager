@@ -1,0 +1,55 @@
+{% import "components/form/fields_macros.html.twig" as fields %}
+{% if canedit %}
+<form method="post" action="{{ form_url }}">
+    <input type="hidden" name="id" value="{{ item.fields['id'] }}" />
+    <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}" />
+{% endif %}
+<div class="card-body">
+<div id="mm-params" data-type="{{ item.fields['server_type'] }}" data-ports='{{ default_ports|raw }}'>
+{% if item.fields['server_type'] in ['exchange', 'ms365'] %}
+    <div class="text-muted mb-3">{{ __('Exchange et MS365 : le chiffrement et le port sont imposés par le service, rien à paramétrer ici.', 'mailmanager') }}</div>
+{% else %}
+{# Chiffrement #}
+<div class="mb-3 row">
+    <label class="col-xxl-4 col-form-label">{{ __('Chiffrement', 'mailmanager') }}</label>
+    <div class="col-xxl-8">
+        <select name="encryption" id="mm-encryption" class="form-select">
+            {% for enc, label in encryptions %}
+                <option value="{{ enc }}" {% if item.fields['encryption'] == enc %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+{# Port #}
+{{ fields.numberField('port', item.fields['port'] ?? 0, __('Port', 'mailmanager'), {
+    'min': 1, 'max': 65535,
+    'id': 'mm-port',
+    'helper': __('Laissez 0 pour utiliser le port par défaut du type/chiffrement', 'mailmanager')
+}) }}
+{% endif %}
+</div>
+{% if item.fields['server_type'] in password_in_out_types %}
+{# Password In = Out (pertinent pour SMTP) #}
+<div id="mm-password-in-out-section" class="mb-3 row">
+    <label class="col-xxl-4 col-form-label">{{ __('Mot de passe identique entrée/sortie', 'mailmanager') }}</label>
+    <div class="col-xxl-8 d-flex align-items-center">
+        <input type="hidden" name="password_in_out" value="0" />
+        <input type="checkbox" name="password_in_out" id="mm-password-in-out" class="form-check-input"
+               value="1" {% if item.fields['password_in_out'] ?? 0 %}checked{% endif %} />
+        <small class="text-muted ms-2">{{ __('Le même compte sert pour la réception et l\'envoi', 'mailmanager') }}</small>
+    </div>
+</div>
+
+{% endif %}
+</div>
+{% if canedit %}
+    <div class="card-footer d-flex justify-content-end">
+        <button type="submit" name="update" class="btn btn-primary">
+            <i class="ti ti-device-floppy me-1"></i>{{ __('Sauvegarder') }}
+        </button>
+    </div>
+</form>
+{% endif %}

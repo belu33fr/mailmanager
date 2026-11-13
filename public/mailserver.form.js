@@ -1,72 +1,16 @@
-(function () {
-    function mmBoot() {
 /**
- * mailserver.form.js
- * Gère l'auto-complétion du port selon le type de serveur et le chiffrement,
- * et affiche/masque la section "password in=out" selon le type.
- */
-(function () {
-    'use strict';
-
-    const data        = window.mailmanagerServer || {};
-    const defaultPorts= data.defaultPorts || {};
-    const pwInOutTypes= data.passwordInOutTypes || [];
-
-    const typeSelect  = document.getElementById('mm-server-type');
-    const encSelect   = document.getElementById('mm-encryption');
-    const portInput   = document.getElementById('mm-port');
-    const pwSection   = document.getElementById('mm-password-in-out-section');
-
-    function updatePort() {
-        if (!typeSelect || !encSelect || !portInput) return;
-        const type = typeSelect.value;
-        const enc  = encSelect.value;
-        if (defaultPorts[type] && defaultPorts[type][enc]) {
-            portInput.value = defaultPorts[type][enc];
-        }
-    }
-
-    function updatePasswordSection() {
-        if (!typeSelect) return;
-        const type = typeSelect.value;
-        if (pwSection) pwSection.style.display = pwInOutTypes.includes(type) ? '' : 'none';
-        // Exchange / MS365 : chiffrement et port imposés par le service
-        const fixed = (type === 'exchange' || type === 'ms365');
-        const net = document.getElementById('mm-network-fields');
-        const none = document.getElementById('mm-network-none');
-        if (net) net.style.display = fixed ? 'none' : '';
-        if (none) none.style.display = fixed ? '' : 'none';
-    }
-
-    if (typeSelect) {
-        typeSelect.addEventListener('change', function () {
-            updatePort();
-            updatePasswordSection();
-        });
-    }
-
-    if (encSelect) {
-        encSelect.addEventListener('change', updatePort);
-    }
-
-    // Init au chargement
-    updatePasswordSection();
-
-})();
-
-/**
- * Sélecteur de domaines (liste déroulante avec recherche + Ajouter / Retirer)
- * et contact technique déduit du compte d'accès.
+ * mailserver.form.js — fiche Serveur mail (onglets natifs GLPI, contenus insérés en AJAX).
+ *  - onglet principal : contact technique déduit du compte administrateur
+ *  - onglet Paramétrage : port par défaut selon le chiffrement
+ *  - onglet Organisation : sélecteur de domaines (Ajouter / Retirer / Efface liste)
+ * Chaque init est idempotent ; elles sont relancées à chaque insertion de contenu.
  */
 (function () {
     'use strict';
 
     var $ = window.jQuery;
-    var data = window.mailmanagerServer || {};
+    function getData() { return window.mailmanagerServer || {}; }
 
-    // ------------------------------------------------------------------
-    // Domaines gérés
-    // ------------------------------------------------------------------
     function initDomains() {
         var avail    = document.getElementById('mm-dom-available');
         var selected = document.getElementById('mm-dom-selected');
@@ -74,6 +18,8 @@
         var delBtn   = document.getElementById('mm-dom-remove');
         var counter  = document.getElementById('mm-dom-count');
         if (!avail || !selected || !addBtn || !delBtn) return;
+        if (avail.dataset.mmInit === '1') return;
+        avail.dataset.mmInit = '1';
 
         // Liste déroulante avec zone de recherche (select2 est fourni par GLPI)
         if ($ && $.fn && $.fn.select2) {
@@ -160,11 +106,14 @@
     // Contact technique : déduit du compte d'accès, modifiable à la main
     // ------------------------------------------------------------------
     function initTechContact() {
+        var data = getData();
         var account = document.querySelector('select[name="plugin_accounts_accounts_id"]');
         var tech    = document.querySelector('select[name="users_id_tech"]');
         var hint    = document.querySelector('#mm-tech-hint small');
         var hintRow = document.getElementById('mm-tech-hint');
         if (!account || !tech || !data.ajaxUrl) return;
+        if (tech.dataset.mmInit === '1') return;
+        tech.dataset.mmInit = '1';
 
         var programmatic = false;
 
@@ -219,22 +168,26 @@
         }
     }
 
-    function run() { initDomains(); initTechContact(); }
-    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', run); } else { run(); }
-})();
+    
+    function initParams() {
+        var wrap = document.getElementById('mm-params');
+        if (!wrap || wrap.dataset.mmInit === '1') return;
+        wrap.dataset.mmInit = '1';
+        var ports = {};
+        try { ports = JSON.parse(wrap.getAttribute('data-ports') || '{}'); } catch (e) { /* ignore */ }
+        var type = wrap.getAttribute('data-type');
+        var enc  = document.getElementById('mm-encryption');
+        var port = document.getElementById('mm-port');
+        if (!enc || !port) return;
+        enc.addEventListener('change', function () {
+            if (ports[type] && ports[type][enc.value]) { port.value = ports[type][enc.value]; }
+        });
+    }
 
-    }
-    // La fiche est souvent insérée après le chargement (onglet AJAX de GLPI) :
-    // on initialise dès que son marqueur apparaît, une seule fois par insertion.
-    function mmTry() {
-        var el = document.querySelector('#mm-domains');
-        if (!el || el.dataset.mmInit === '1') return;
-        el.dataset.mmInit = '1';
-        mmBoot();
-    }
-    mmTry();
-    document.addEventListener('DOMContentLoaded', mmTry);
+    function tryInit() { initDomains(); initTechContact(); initParams(); }
+    tryInit();
+    document.addEventListener('DOMContentLoaded', tryInit);
     if (window.MutationObserver) {
-        new MutationObserver(mmTry).observe(document.documentElement, { childList: true, subtree: true });
+        new MutationObserver(tryInit).observe(document.documentElement, { childList: true, subtree: true });
     }
 })();
