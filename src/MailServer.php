@@ -285,7 +285,7 @@ class MailServer extends CommonDBTM
         if ((int) ($input['users_id_tech'] ?? 0) <= 0) {
             return $this->refuseMissingTechContact();
         }
-        return $input;
+        return $this->forceSharedIdentity($input);
     }
 
     public function prepareInputForUpdate($input)
@@ -302,6 +302,19 @@ class MailServer extends CommonDBTM
         // pas appelé par GLPI (aucun champ modifié) ; on synchronise donc ici.
         if (isset($_POST['_linked_domains_defined']) && (int) ($input['id'] ?? 0) > 0) {
             $this->saveDomainLinks((int) $input['id']);
+        }
+        return $this->forceSharedIdentity($input);
+    }
+
+    /**
+     * Exchange et MS365 n'ont qu'une identité pour la réception et l'envoi :
+     * « mot de passe identique entrée/sortie » est toujours vrai (valeur non modifiable).
+     */
+    private function forceSharedIdentity(array $input): array
+    {
+        $type = $input['server_type'] ?? ($this->fields['server_type'] ?? '');
+        if (in_array($type, ['exchange', 'ms365'], true)) {
+            $input['password_in_out'] = 1;
         }
         return $input;
     }

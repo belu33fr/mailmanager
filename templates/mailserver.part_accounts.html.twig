@@ -8,7 +8,7 @@ window.mailmanagerServer = {
     ajaxUrl: '{{ ajax_url }}'
 };
 </script>
-{{ mm.section(__('Comptes d\'accès', 'mailmanager'), 'ti ti-key') }}
+{{ mm.section(__('Comptes d\'accès au serveur', 'mailmanager'), 'ti ti-key') }}
 {% if accounts_class %}
     {{ fields.dropdownField(
         accounts_class,

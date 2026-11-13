@@ -189,6 +189,11 @@
             if (net)  net.style.display  = fixed ? 'none' : '';
             if (none) none.style.display = fixed ? '' : 'none';
             if (pw)   pw.style.display   = pwTypes.indexOf(type) >= 0 ? '' : 'none';
+            // Exchange / MS365 : une seule identité entrée/sortie => case masquée et cochée
+            if (fixed) {
+                var cb = document.querySelector('input[type="checkbox"][name="password_in_out"]');
+                if (cb) cb.checked = true;
+            }
         }
         function applyPort() {
             if (enc && port && ports[type] && ports[type][enc.value]) { port.value = ports[type][enc.value]; }
