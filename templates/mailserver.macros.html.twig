@@ -1,0 +1,6 @@
+{# Titre de section : bandeau bleu clair, texte bleu en majuscules et gras (style « Carte réseau » de GLPI) #}
+{% macro section(label, first = false) %}
+<div class="col-12 {{ first ? 'mt-0' : 'mt-3' }} mb-2">
+    <div class="bg-primary-lt text-primary text-uppercase fw-bold px-3 py-2 rounded-1">{{ label }}</div>
+</div>
+{% endmacro %}

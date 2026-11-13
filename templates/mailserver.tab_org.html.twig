@@ -1,4 +1,5 @@
 {% import "components/form/fields_macros.html.twig" as fields %}
+{% import '@mailmanager/mailserver.macros.html.twig' as mm %}
 {% if canedit %}
 <form method="post" action="{{ form_url }}">
     <input type="hidden" name="id" value="{{ item.fields['id'] }}" />
@@ -6,7 +7,7 @@
 {% endif %}
 <div class="card-body">
 <div class="row flex-row">
-{{ fields.largeTitle(__('Domaines', 'mailmanager'), 'ti ti-world', true) }}
+{{ mm.section(__('Domaines', 'mailmanager'), true) }}
 {% set domains_block %}
 <input type="hidden" name="_linked_domains_defined" value="1" />
 
@@ -50,7 +51,7 @@
     'container_id': 'mm-domains'
 }) }}
 
-{{ fields.largeTitle(__('Rattachement', 'mailmanager'), 'ti ti-building') }}
+{{ mm.section(__('Rattachement', 'mailmanager')) }}
 {# État #}
 {{ fields.dropdownField('State', 'states_id', item.fields['states_id'] ?? 0, __('État'), {
     'display_emptychoice': true

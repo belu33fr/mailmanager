@@ -1,5 +1,6 @@
 {% import "components/form/fields_macros.html.twig" as fields %}
-{{ fields.largeTitle(__('Serveur', 'mailmanager'), 'ti ti-server') }}
+{% import '@mailmanager/mailserver.macros.html.twig' as mm %}
+{{ mm.section(__('Serveur', 'mailmanager')) }}
 
 {% set type_select %}
 <select name="server_type" id="mm-server-type" class="form-select" required>
