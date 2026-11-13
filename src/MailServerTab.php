@@ -52,6 +52,9 @@ class MailServerTab extends CommonGLPI
                 'encryptions'           => MailServer::ENCRYPTIONS,
                 'default_ports'         => json_encode(MailServer::DEFAULT_PORTS),
                 'password_in_out_types' => MailServer::TYPES_WITH_PASSWORD_IN_OUT,
+                'server_types'          => MailServer::TYPES,
+                'ajax_url'              => Plugin::getWebDir('mailmanager') . '/ajax/mailmanager.php',
+                'accounts_class'        => class_exists('\\GlpiPlugin\\Accounts\\Account') ? '\\GlpiPlugin\\Accounts\\Account' : null,
             ];
             TemplateRenderer::getInstance()->display('@mailmanager/mailserver.tab_params.html.twig', $params);
             return true;

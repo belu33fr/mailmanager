@@ -1,0 +1,36 @@
+{% import "components/form/fields_macros.html.twig" as fields %}
+{# Données JS pour le contact technique #}
+<script>
+window.mailmanagerServer = {
+    defaultPorts: {{ default_ports|raw }},
+    passwordInOutTypes: {{ password_in_out_types|json_encode|raw }},
+    ajaxUrl: '{{ ajax_url }}'
+};
+</script>
+{{ fields.smallTitle(__('Comptes d\'accès', 'mailmanager')) }}
+{% if accounts_class %}
+    {{ fields.dropdownField(
+        accounts_class,
+        'plugin_accounts_accounts_id',
+        item.fields['plugin_accounts_accounts_id'] ?? 0,
+        __('Compte administrateur (accès serveur)', 'mailmanager'),
+        {'display_emptychoice': true}
+    ) }}
+{% else %}
+    <div class="alert alert-warning">
+        <i class="ti ti-alert-triangle me-2"></i>
+        {{ __('Plugin Accounts requis pour la gestion des mots de passe.', 'mailmanager') }}
+    </div>
+{% endif %}
+
+{# Contact technique (obligatoire) : déduit du compte d'accès, modifiable à la main #}
+{{ fields.dropdownField('User', 'users_id_tech', item.fields['users_id_tech'] ?? 0, __('Contact technique', 'mailmanager') ~ ' *', {
+    'display_emptychoice': true,
+    'right': 'all',
+    'with_no_right': 1,
+    'required': true,
+    'helper': __('Personne à contacter pour ce serveur (obligatoire). Proposé automatiquement à partir du compte administrateur choisi ci-dessus (utilisateur ou technicien qui y est rattaché) ; vous pouvez choisir un autre utilisateur.', 'mailmanager')
+}) }}
+<div id="mm-tech-hint" class="mb-3 row" style="display:none">
+    <div class="col-xxl-8 offset-xxl-4"><small class="text-muted"></small></div>
+</div>

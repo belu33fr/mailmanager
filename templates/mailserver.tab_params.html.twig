@@ -5,6 +5,8 @@
     <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}" />
 {% endif %}
 <div class="card-body">
+{% include '@mailmanager/mailserver.part_server.html.twig' %}
+
 <div id="mm-params" data-type="{{ item.fields['server_type'] }}" data-ports='{{ default_ports|raw }}'>
 {% if item.fields['server_type'] in ['exchange', 'ms365'] %}
     <div class="text-muted mb-3">{{ __('Exchange et MS365 : le chiffrement et le port sont imposés par le service, rien à paramétrer ici.', 'mailmanager') }}</div>
@@ -44,6 +46,8 @@
 </div>
 
 {% endif %}
+
+{% include '@mailmanager/mailserver.part_accounts.html.twig' %}
 </div>
 {% if canedit %}
     <div class="card-footer d-flex justify-content-end">
