@@ -92,10 +92,13 @@ try {
             if ($accountId > 0 && $DB->tableExists($table)) {
                 $row = $DB->request(['FROM' => $table, 'WHERE' => ['id' => $accountId]])->current();
                 if ($row) {
-                    // 1. utilisateur renseigné sur le compte
-                    if ((int) ($row['users_id'] ?? 0) > 0) {
-                        $uid    = (int) $row['users_id'];
-                        $source = 'account';
+                    // 1. technicien responsable, sinon utilisateur renseigné sur le compte
+                    foreach (['users_id_tech', 'users_id'] as $col) {
+                        if ((int) ($row[$col] ?? 0) > 0) {
+                            $uid    = (int) $row[$col];
+                            $source = 'account';
+                            break;
+                        }
                     }
                     // 2. sinon, identifiant ou nom du compte = identifiant ou adresse d'un utilisateur
                     if ($uid === 0) {

@@ -27,9 +27,15 @@
     }
 
     function updatePasswordSection() {
-        if (!typeSelect || !pwSection) return;
+        if (!typeSelect) return;
         const type = typeSelect.value;
-        pwSection.style.display = pwInOutTypes.includes(type) ? '' : 'none';
+        if (pwSection) pwSection.style.display = pwInOutTypes.includes(type) ? '' : 'none';
+        // Exchange / MS365 : chiffrement et port imposés par le service
+        const fixed = (type === 'exchange' || type === 'ms365');
+        const net = document.getElementById('mm-network-fields');
+        const none = document.getElementById('mm-network-none');
+        if (net) net.style.display = fixed ? 'none' : '';
+        if (none) none.style.display = fixed ? '' : 'none';
     }
 
     if (typeSelect) {
@@ -199,7 +205,7 @@
         }
 
         if ($) {
-            $(account).on('change', function () { fromAccount(false); });
+            $(account).on('change select2:select', function () { fromAccount(false); });
             $(tech).on('change', function () {
                 if (!programmatic) { tech.dataset.mmAuto = '0'; showHint(''); }
             });

@@ -12,8 +12,17 @@ window.mailmanagerServer = {
 };
 </script>
 
-{{ fields.smallTitle(__('Informations générales', 'mailmanager')) }}
+{# Onglets internes : un seul formulaire, un seul bouton Sauvegarder #}
+<ul class="nav nav-tabs mb-3" id="mm-tabs" role="tablist">
+    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#mm-tab-server" role="tab"><i class="ti ti-server me-1"></i>{{ __('Serveur', 'mailmanager') }}</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#mm-tab-params" role="tab"><i class="ti ti-adjustments me-1"></i>{{ __('Paramétrage', 'mailmanager') }}</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#mm-tab-accounts" role="tab"><i class="ti ti-key me-1"></i>{{ __('Comptes d\'accès', 'mailmanager') }}</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#mm-tab-org" role="tab"><i class="ti ti-building me-1"></i>{{ __('Organisation', 'mailmanager') }}</a></li>
+</ul>
 
+<div class="tab-content">
+
+<div class="tab-pane fade show active" id="mm-tab-server" role="tabpanel">
 {# Type de serveur #}
 <div class="mb-3 row">
     <label class="col-xxl-4 col-form-label">{{ __('Type de serveur', 'mailmanager') }} *</label>
@@ -34,6 +43,10 @@ window.mailmanagerServer = {
     'helper': __('Ex: mail.example.com, smtp.office365.com', 'mailmanager')
 }) }}
 
+</div>
+
+<div class="tab-pane fade" id="mm-tab-params" role="tabpanel">
+<div id="mm-network-fields">
 {# Chiffrement #}
 <div class="mb-3 row">
     <label class="col-xxl-4 col-form-label">{{ __('Chiffrement', 'mailmanager') }}</label>
@@ -55,11 +68,23 @@ window.mailmanagerServer = {
     'helper': __('Laissez 0 pour utiliser le port par défaut du type/chiffrement', 'mailmanager')
 }) }}
 
-{# Actif #}
-{{ fields.checkboxField('is_active', item.fields['is_active'] ?? 1, __('Actif', 'mailmanager')) }}
+</div>
+<div id="mm-network-none" class="text-muted mb-3" style="display:none">
+    {{ __('Exchange et MS365 : le chiffrement et le port sont imposés par le service, rien à paramétrer ici.', 'mailmanager') }}
+</div>
+{# Password In = Out (pertinent pour SMTP) #}
+<div id="mm-password-in-out-section" class="mb-3 row" style="display:none">
+    <label class="col-xxl-4 col-form-label">{{ __('Mot de passe identique entrée/sortie', 'mailmanager') }}</label>
+    <div class="col-xxl-8 d-flex align-items-center">
+        <input type="checkbox" name="password_in_out" id="mm-password-in-out" class="form-check-input"
+               value="1" {% if item.fields['password_in_out'] ?? 0 %}checked{% endif %} />
+        <small class="text-muted ms-2">{{ __('Le même compte sert pour la réception et l\'envoi', 'mailmanager') }}</small>
+    </div>
+</div>
 
-{{ fields.smallTitle(__('Compte technique d\'accès', 'mailmanager')) }}
+</div>
 
+<div class="tab-pane fade" id="mm-tab-accounts" role="tabpanel">
 {% if accounts_class %}
     {{ fields.dropdownField(
         accounts_class,
@@ -75,30 +100,21 @@ window.mailmanagerServer = {
     </div>
 {% endif %}
 
-{# Password In = Out (pertinent pour SMTP) #}
-<div id="mm-password-in-out-section" class="mb-3 row" style="display:none">
-    <label class="col-xxl-4 col-form-label">{{ __('Mot de passe identique entrée/sortie', 'mailmanager') }}</label>
-    <div class="col-xxl-8 d-flex align-items-center">
-        <input type="checkbox" name="password_in_out" id="mm-password-in-out" class="form-check-input"
-               value="1" {% if item.fields['password_in_out'] ?? 0 %}checked{% endif %} />
-        <small class="text-muted ms-2">{{ __('Le même compte sert pour la réception et l\'envoi', 'mailmanager') }}</small>
-    </div>
-</div>
-
 {# Contact technique (obligatoire) : déduit du compte d'accès, modifiable à la main #}
 {{ fields.dropdownField('User', 'users_id_tech', item.fields['users_id_tech'] ?? 0, __('Contact technique', 'mailmanager') ~ ' *', {
     'display_emptychoice': true,
     'right': 'all',
     'with_no_right': 1,
     'required': true,
-    'helper': __('Personne à contacter pour ce serveur (obligatoire). Proposé automatiquement à partir du compte d\'accès ci-dessus ; vous pouvez choisir un autre utilisateur.', 'mailmanager')
+    'helper': __('Personne à contacter pour ce serveur (obligatoire). Proposé automatiquement à partir du compte administrateur choisi dans cet onglet (utilisateur ou technicien qui y est rattaché) ; vous pouvez choisir un autre utilisateur.', 'mailmanager')
 }) }}
 <div id="mm-tech-hint" class="mb-3 row" style="display:none">
     <div class="col-xxl-8 offset-xxl-4"><small class="text-muted"></small></div>
 </div>
 
-{{ fields.smallTitle(__('Organisation', 'mailmanager')) }}
+</div>
 
+<div class="tab-pane fade" id="mm-tab-org" role="tabpanel">
 {# Domaines gérés : liste déroulante avec recherche, puis boutons Ajouter / Retirer #}
 <div class="mb-3 row" id="mm-domains">
     <label class="col-xxl-4 col-form-label">{{ __('Domaines gérés', 'mailmanager') }}</label>
@@ -159,8 +175,8 @@ window.mailmanagerServer = {
     'helper': __('Groupe chargé de l\'administration et du suivi technique de ce serveur.', 'mailmanager')
 }) }}
 
-{{ fields.smallTitle(__('Notes', 'mailmanager')) }}
-{{ fields.textareaField('comment', item.fields['comment'] ?? '', __('Commentaire')) }}
+</div>
 
+</div>
 
 {% endblock more_fields %}

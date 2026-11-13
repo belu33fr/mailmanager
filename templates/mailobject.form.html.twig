@@ -62,7 +62,6 @@ window.mailmanagerObject = {
 }) }}
 
 {# Actif #}
-{{ fields.checkboxField('is_active', item.fields['is_active'] ?? 1, __('Actif', 'mailmanager')) }}
 
 {# État #}
 {{ fields.dropdownField('State', 'states_id', item.fields['states_id'] ?? 0, __('État'), {
@@ -340,8 +339,6 @@ window.mailmanagerObject = {
 
 {% endif %}
 
-{{ fields.smallTitle(__('Notes', 'mailmanager')) }}
-{{ fields.textareaField('comment', item.fields['comment'] ?? '', __('Commentaire')) }}
 
 {# Création rapide d'un utilisateur GLPI (les champs n'ont pas de name : rien n'est envoyé avec la fiche) #}
 {% if can_create_user %}
