@@ -13,14 +13,15 @@ window.mailmanagerServer = {
 </script>
 
 {# Onglets internes : un seul formulaire, un seul bouton Sauvegarder #}
-<ul class="nav nav-tabs mb-3" id="mm-tabs" role="tablist">
+<div class="d-flex align-items-start gap-3">
+<ul class="nav nav-tabs flex-column flex-shrink-0 border-bottom-0" id="mm-tabs" role="tablist" style="min-width:13rem">
     <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#mm-tab-server" role="tab"><i class="ti ti-server me-1"></i>{{ __('Serveur', 'mailmanager') }}</a></li>
     <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#mm-tab-params" role="tab"><i class="ti ti-adjustments me-1"></i>{{ __('Paramétrage', 'mailmanager') }}</a></li>
     <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#mm-tab-accounts" role="tab"><i class="ti ti-key me-1"></i>{{ __('Comptes d\'accès', 'mailmanager') }}</a></li>
     <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#mm-tab-org" role="tab"><i class="ti ti-building me-1"></i>{{ __('Organisation', 'mailmanager') }}</a></li>
 </ul>
 
-<div class="tab-content">
+<div class="tab-content flex-grow-1 border-start ps-3">
 
 <div class="tab-pane fade show active" id="mm-tab-server" role="tabpanel">
 {# Type de serveur #}
@@ -177,6 +178,7 @@ window.mailmanagerServer = {
 
 </div>
 
+</div>
 </div>
 
 {% endblock more_fields %}
