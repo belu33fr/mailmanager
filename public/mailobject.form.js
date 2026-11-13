@@ -1,3 +1,5 @@
+(function () {
+    function mmBoot() {
 /**
  * mailobject.form.js
  * Affiche/masque les sections selon le type d'objet mail sélectionné.
@@ -327,4 +329,8 @@
             });
         });
     }
+})();
+
+    }
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', mmBoot); } else { mmBoot(); }
 })();

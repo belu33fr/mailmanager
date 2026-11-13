@@ -1,3 +1,5 @@
+(function () {
+    function mmBoot() {
 /**
  * mailserver.form.js
  * Gère l'auto-complétion du port selon le type de serveur et le chiffrement,
@@ -112,17 +114,39 @@
             refresh();
         }
 
-        addBtn.addEventListener('click', add);
-        delBtn.addEventListener('click', removeSelected);
-        selected.addEventListener('dblclick', removeSelected);
-
-        // Tout ce qui est dans la liste liée doit partir avec le formulaire
-        var form = selected.closest('form');
-        if (form) {
-            form.addEventListener('submit', function () {
-                Array.prototype.forEach.call(selected.options, function (o) { o.selected = true; });
+        function clearAll() {
+            if (!selected.options.length) return;
+            if (!window.confirm('Vider toute la liste des domaines liés à ce serveur ?')) return;
+            Array.prototype.slice.call(selected.options).forEach(function (opt) {
+                opt.selected = false;
+                avail.appendChild(opt);
             });
+            sortSelect(avail);
+            refresh();
         }
+
+        // Écouteurs délégués sur document : robustes même si le DOM est remanié (select2, onglets)
+        if (!window.__mmDomBound) {
+            window.__mmDomBound = true;
+            document.addEventListener('click', function (e) {
+                var t = e.target.closest ? e.target.closest('#mm-dom-add, #mm-dom-remove, #mm-dom-clear') : null;
+                if (!t) return;
+                e.preventDefault();
+                if (t.id === 'mm-dom-add') window.mmDomActions.add();
+                else if (t.id === 'mm-dom-remove') window.mmDomActions.remove();
+                else window.mmDomActions.clear();
+            });
+            document.addEventListener('dblclick', function (e) {
+                if (e.target.closest && e.target.closest('#mm-dom-selected')) window.mmDomActions.remove();
+            });
+            document.addEventListener('submit', function (e) {
+                var sel = document.getElementById('mm-dom-selected');
+                if (sel && e.target.contains(sel)) {
+                    Array.prototype.forEach.call(sel.options, function (o) { o.selected = true; });
+                }
+            }, true);
+        }
+        window.mmDomActions = { add: add, remove: removeSelected, clear: clearAll };
         refresh();
     }
 
@@ -191,4 +215,8 @@
 
     function run() { initDomains(); initTechContact(); }
     if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', run); } else { run(); }
+})();
+
+    }
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', mmBoot); } else { mmBoot(); }
 })();

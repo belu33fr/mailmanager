@@ -54,9 +54,15 @@ function plugin_init_mailmanager(): void
     // Page de configuration
     $PLUGIN_HOOKS[Hooks::CONFIG_PAGE]['mailmanager'] = 'front/config.php';
 
-    // JS du formulaire boîte mail (affichage conditionnel par type)
-    if (strpos($_SERVER['REQUEST_URI'] ?? '', 'mailmanager/front/mailobject.form.php') !== false) {
+    // JS des formulaires, chargé par GLPI dans l'en-tête de la page (comme dnsmanager)
+    $uri = $_SERVER['REQUEST_URI'] ?? '';
+    if (strpos($uri, 'mailmanager/front/mailobject.form.php') !== false) {
+        $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['mailmanager'][] = 'public/help.fix.js';
         $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['mailmanager'][] = 'public/mailobject.form.js';
+    }
+    if (strpos($uri, 'mailmanager/front/mailserver.form.php') !== false) {
+        $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['mailmanager'][] = 'public/help.fix.js';
+        $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['mailmanager'][] = 'public/mailserver.form.js';
     }
 }
 

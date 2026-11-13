@@ -117,11 +117,14 @@ window.mailmanagerServer = {
         </div>
 
         <div class="d-flex align-items-center gap-2 mb-2">
-            <button type="button" id="mm-dom-add" class="btn btn-outline-primary btn-sm">
-                <i class="ti ti-arrow-down me-1"></i>{{ __('Ajouter', 'mailmanager') }}
+            <button type="button" id="mm-dom-add" class="btn btn-primary">
+                <i class="ti ti-plus me-1"></i>{{ __('Ajouter', 'mailmanager') }}
             </button>
-            <button type="button" id="mm-dom-remove" class="btn btn-outline-danger btn-sm">
-                <i class="ti ti-arrow-up me-1"></i>{{ __('Retirer la sélection', 'mailmanager') }}
+            <button type="button" id="mm-dom-remove" class="btn btn-primary">
+                <i class="ti ti-minus me-1"></i>{{ __('Retirer', 'mailmanager') }}
+            </button>
+            <button type="button" id="mm-dom-clear" class="btn btn-primary">
+                <i class="ti ti-trash me-1"></i>{{ __('Efface liste', 'mailmanager') }}
             </button>
             <small class="text-muted ms-auto" id="mm-dom-count"></small>
         </div>
@@ -133,7 +136,7 @@ window.mailmanagerServer = {
                 {% endif %}
             {% endfor %}
         </select>
-        <small class="text-muted">{{ __('Choisissez un domaine dans la liste puis « Ajouter ». Double-clic ou « Retirer la sélection » pour l\'enlever.', 'mailmanager') }}</small>
+        <small class="text-muted">{{ __('Choisissez un domaine dans la liste puis « Ajouter ». Double-clic ou « Retirer » pour enlever la sélection, « Efface liste » pour tout vider.', 'mailmanager') }}</small>
     </div>
 </div>
 
@@ -159,7 +162,5 @@ window.mailmanagerServer = {
 {{ fields.smallTitle(__('Notes', 'mailmanager')) }}
 {{ fields.textareaField('comment', item.fields['comment'] ?? '', __('Commentaire')) }}
 
-<script src="{{ webdir }}/public/help.fix.js"></script>
-<script src="{{ webdir }}/public/mailserver.form.js"></script>
 
 {% endblock more_fields %}
