@@ -162,6 +162,20 @@
             account.addEventListener('change', function () { fromAccount(false); });
         }
 
+        // Fiche déjà remplie : afficher le message si le contact est bien celui du compte
+        var accId = parseInt(account.value, 10) || 0;
+        if (accId > 0 && tech.value && tech.value !== '0') {
+            fetch(data.ajaxUrl + '?action=account_user&accounts_id=' + accId, { credentials: 'same-origin' })
+                .then(function (r) { return r.json(); })
+                .then(function (d) {
+                    if (d && d.users_id && String(d.users_id) === String(tech.value)) {
+                        tech.dataset.mmAuto = '1';
+                        showHint('Proposé d\'après le compte d\'accès — modifiable.');
+                    }
+                })
+                .catch(function () { /* silencieux */ });
+        }
+
         // Contact vide au chargement alors qu'un compte est choisi : proposer
         if ((!tech.value || tech.value === '0') && account.value && account.value !== '0') {
             fromAccount(true);

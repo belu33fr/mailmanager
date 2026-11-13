@@ -33,11 +33,15 @@
     </div>
 </div>
 
+{% set pw_visible = item.fields['server_type'] in password_in_out_types %}
+<div id="mm-password-in-out-section" class="col-12 p-0" style="{{ pw_visible ? '' : 'display:none' }}">
+    <div class="row flex-row m-0">
 {{ fields.checkboxField('password_in_out', item.fields['password_in_out'] ?? 0, __('Mot de passe identique entrée/sortie', 'mailmanager'), {
-    'container_id': 'mm-password-in-out-section',
     'helper': __('Le même compte sert pour la réception et l\'envoi', 'mailmanager')
 }) }}
 
+    </div>
+</div>
 {% include '@mailmanager/mailserver.part_accounts.html.twig' %}
 </div>
 </div>
